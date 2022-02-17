@@ -10,33 +10,43 @@ def sound(path: Path):
     path = path.resolve()
     aqt.sound.play(str(path))
 
+
 def add_script(web: AnkiWebView, js: str):
     """Add script to the end of the body to be executed after Anki's code"""
     js.replace(r"`", r"\`")
-    web.eval("""
+    web.eval(
+        """
     (() => {
         const script = document.createElement("script")
         script.innerHTML = `%s`
         document.body.appendChild(script)
     })()
-    """%js)
+    """
+        % js
+    )
     return
+
 
 def add_style(web: AnkiWebView, css: str):
     """Add style to the end of the head"""
     css.replace(r"`", r"\`")
-    web.eval("""
+    web.eval(
+        """
     (() => {
         const style = document.createElement("style")
         style.innerHTML = `%s`
         document.head.appendChild(style)
     })()
-    """%css)
+    """
+        % css
+    )
 
-def add_html(web: AnkiWebView, html: str, to:Literal["top", "bottom"] = "bottom"):
+
+def add_html(web: AnkiWebView, html: str, to: Literal["top", "bottom"] = "bottom"):
     """Add HTML to top/bottom of existing content (div#main)"""
     html.replace(r"`", r"\`")
-    web.eval("""
+    web.eval(
+        """
     (() => {
         const div = document.createElement("div")
         div.innerHTML = `%s`
@@ -53,4 +63,6 @@ def add_html(web: AnkiWebView, html: str, to:Literal["top", "bottom"] = "bottom"
             }
         }
     })()
-    """%(html, to))
+    """
+        % (html, to)
+    )
