@@ -1,4 +1,4 @@
-from typing import Callable, Literal, Optional, TypeVar, Generic
+from typing import Callable, Literal, Optional, TypeVar, Generic, Union
 import os
 
 import anki
@@ -49,16 +49,39 @@ class CongratsPageTrigger(Trigger[Callable[["aqt.webview.AnkiWebView"], None]]):
 congrats_page = CongratsPageTrigger()
 
 
+class ReviewerPageTrigger(Trigger[Callable[["aqt.webview.WebContent"], None]]):
+    """Triggered when reviewer web is loaded.
+    Anki reloads its webview every ~1000 reviews,
+    so it may be called multiple times during single review session.
+
+    # Arguments
+    webview
+    """
+
+    pass
+
+
+reviewer_page = ReviewerPageTrigger()
+
+
 # Trigger the above triggers
 ############################
 
 
-def on_page_rendered(web: "aqt.webview.AnkiWebView") -> None:
+def _on_page_rendered(web: "aqt.webview.AnkiWebView") -> None:
     path = web.page().url().path()  # .path() removes "#night"
     name = os.path.basename(path)
     if name == "congrats.html":
         congrats_page.trigger(web)
 
 
+def _on_webview_set_content(
+    web: "aqt.webview.WebContent", context: Union[object, None]
+):
+    if isinstance(context, aqt.reviewer.Reviewer):
+        reviewer_page.trigger(web)
+
+
 gui_hooks.reviewer_did_answer_card.append(answer_card.trigger)
-gui_hooks.webview_did_inject_style_into_page.append(on_page_rendered)
+gui_hooks.webview_did_inject_style_into_page.append(_on_page_rendered)
+gui_hooks.webview_will_set_content.append(_on_webview_set_content)

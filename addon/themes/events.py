@@ -1,8 +1,8 @@
 from pathlib import Path
-from typing import Literal
+from typing import Literal, Union
 
 from aqt import mw, gui_hooks
-from aqt.webview import AnkiWebView
+from aqt.webview import AnkiWebView, WebContent
 import aqt.sound
 
 try:  # 2.1.50+
@@ -64,58 +64,74 @@ def audio(file: Path):
     audio_player.play_file(str(file))
 
 
-def add_script(web: AnkiWebView, js: str):
+def add_script(web: Union[AnkiWebView, WebContent], js: str):
     """Add script to the end of the body to be executed after Anki's code"""
-    js.replace(r"`", r"\`")
-    web.eval(
+    if isinstance(web, AnkiWebView):
+        js.replace(r"`", r"\`")
+        web.eval(
+            """
+        (() => {
+            const script = document.createElement("script")
+            script.innerHTML = `%s`
+            document.body.appendChild(script)
+        })()
         """
-    (() => {
-        const script = document.createElement("script")
-        script.innerHTML = `%s`
-        document.body.appendChild(script)
-    })()
-    """
-        % js
-    )
+            % js
+        )
+    else:
+        web.body += "<script>%s</script>" % js
     return
 
 
-def add_style(web: AnkiWebView, css: str):
+def add_style(web: Union[AnkiWebView, WebContent], css: str):
     """Add style to the end of the head"""
-    css.replace(r"`", r"\`")
-    web.eval(
+    if isinstance(web, AnkiWebView):
+        css.replace(r"`", r"\`")
+        web.eval(
+            """
+        (() => {
+            const style = document.createElement("style")
+            style.innerHTML = `%s`
+            document.head.appendChild(style)
+        })()
         """
-    (() => {
-        const style = document.createElement("style")
-        style.innerHTML = `%s`
-        document.head.appendChild(style)
-    })()
-    """
-        % css
-    )
+            % css
+        )
+    else:
+        web.head += "<style>%s</style>" % css
 
 
-def add_html(web: AnkiWebView, html: str, to: Literal["top", "bottom"] = "bottom"):
+def add_html(
+    web: Union[AnkiWebView, WebContent],
+    html: str,
+    to: Literal["top", "bottom"] = "bottom",
+):
     """Add HTML to top/bottom of existing content (div#main)"""
-    html.replace(r"`", r"\`")
-    web.eval(
-        """
-    (() => {
-        const div = document.createElement("div")
-        div.innerHTML = `%s`
+    if isinstance(web, AnkiWebView):
+        html.replace(r"`", r"\`")
+        web.eval(
+            """
+        (() => {
+            const div = document.createElement("div")
+            div.innerHTML = `%s`
 
-        const to = `%s`
-        const main = document.getElementById("main")
-        const parent = main.parentNode
-        while(div.childNodes.length > 0) {
-            const childNode = div.childNodes[0]
-            if (to === "top") {
-                parent.insertBefore(childNode, main)
-            } else {
-                document.body.appendChild(childNode)
+            const to = `%s`
+            const main = document.getElementById("main")
+            const parent = main.parentNode
+            while(div.childNodes.length > 0) {
+                const childNode = div.childNodes[0]
+                if (to === "top") {
+                    parent.insertBefore(childNode, main)
+                } else {
+                    document.body.appendChild(childNode)
+                }
             }
-        }
-    })()
-    """
-        % (html, to)
-    )
+        })()
+        """
+            % (html, to)
+        )
+    else:
+        if to == "top":
+            web.body = html + web.body
+        else:
+            web.body = web.body + html

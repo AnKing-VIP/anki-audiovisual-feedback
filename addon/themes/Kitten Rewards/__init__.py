@@ -4,7 +4,7 @@ from pathlib import Path
 
 from aqt.webview import AnkiWebView
 
-from .. import resourse_url, triggers, events
+from .. import resource_url, triggers, events
 
 
 def random_image() -> str:
@@ -13,7 +13,7 @@ def random_image() -> str:
     files = list(dir.glob("**/*"))
     file = random.choice(files)
     rel_path = file.relative_to(dir)
-    return resourse_url(__file__, f"images/{str(rel_path)}")
+    return resource_url(__file__, f"images/{str(rel_path)}")
 
 
 def on_congrats(web: AnkiWebView):

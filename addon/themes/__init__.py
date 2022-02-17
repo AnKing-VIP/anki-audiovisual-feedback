@@ -4,7 +4,7 @@ from aqt import mw
 from . import triggers
 
 
-def resourse_url(file: str, resource: str) -> str:
+def resource_url(file: str, resource: str) -> str:
     """
     - file: pass __file__
     - resource: relative path from its theme directory
