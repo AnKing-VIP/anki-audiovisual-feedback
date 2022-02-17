@@ -1,14 +1,67 @@
 from pathlib import Path
 from typing import Literal
 
-import aqt.sound
+from aqt import mw, gui_hooks
 from aqt.webview import AnkiWebView
+import aqt.sound
+
+try:  # 2.1.50+
+    from anki.utils import is_win
+except:
+    from anki.utils import isWin as is_win
+
+audio_player = None
 
 
-def sound(path: Path):
-    """Play sound file"""
-    path = path.resolve()
-    aqt.sound.play(str(path))
+def _setup_audio_player():
+    """Create and setup an audio player.
+    Call after collection is loaded
+
+    Modified from aqt.sound.setup_audio
+    """
+    global audio_player
+    audio_player = aqt.sound.AVPlayer()
+
+    taskman = mw.taskman
+    base_folder = mw.pm.base
+    media_folder = mw.col.media.dir()
+
+    try:
+        try:  # 2.1.50+
+            mpvManager = aqt.sound.MpvManager(base_folder, media_folder)
+        except TypeError:
+            mpvManager = aqt.sound.MpvManager(base_folder)
+    except FileNotFoundError:
+        print("mpv not found, reverting to mplayer")
+    except aqt.mpv.MPVProcessError:
+        print("mpv too old, reverting to mplayer")
+
+    if mpvManager is not None:
+        audio_player.players.append(mpvManager)
+
+        if is_win:
+            try:  # 2.1.50+
+                mpvPlayer = aqt.sound.SimpleMpvPlayer(
+                    taskman, base_folder, media_folder
+                )
+            except TypeError:
+                mpvPlayer = aqt.sound.SimpleMpvPlayer(taskman, base_folder)
+            audio_player.players.append(mpvPlayer)
+    else:
+        try:
+            mplayer = aqt.sound.SimpleMplayerSlaveModePlayer(taskman, media_folder)
+        except TypeError:  # 2.1.50+
+            mplayer = aqt.sound.SimpleMplayerSlaveModePlayer(taskman)
+        audio_player.players.append(mplayer)
+
+
+def will_use_audio_player():
+    gui_hooks.collection_did_load.append(lambda _: _setup_audio_player())
+    gui_hooks.profile_will_close.append(lambda: audio_player.shutdown())
+
+
+def audio(file: Path):
+    audio_player.play_file(str(file))
 
 
 def add_script(web: AnkiWebView, js: str):
