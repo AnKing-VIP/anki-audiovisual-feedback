@@ -3,5 +3,11 @@
     "version": {
         "major": -1,
         "minor": -1
+    },
+    "themes": {
+        "Audiovisual Feedback": {
+            "sound_effect": true,
+            "visual_effect": true
+        }
     }
 }

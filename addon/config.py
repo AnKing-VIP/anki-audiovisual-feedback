@@ -17,7 +17,7 @@ def get_themes() -> List[str]:
 
 
 def setup_window(conf_window: ConfigWindow):
-    conf_window.set_footer("Restart Anki for the changes to take effect")
+    conf_window.set_footer("Restart Anki to change theme.")
 
 
 def general_tab(conf_window: ConfigWindow):
