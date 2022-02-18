@@ -4,64 +4,55 @@ from typing import Literal, Union
 from aqt import mw, gui_hooks
 from aqt.webview import AnkiWebView, WebContent
 import aqt.sound
+from aqt.sound import SoundOrVideoTag, AVPlayer
 
 try:  # 2.1.50+
     from anki.utils import is_win
 except:
     from anki.utils import isWin as is_win
 
-audio_player = None
 
+class CustomAVPlayer(AVPlayer):
+    no_interrupt = False
 
-def _setup_audio_player():
-    """Create and setup an audio player.
-    Call after collection is loaded
+    def _on_play_without_interrupt_finished(self):
+        self.no_interrupt = False
+        self._on_play_finished()
 
-    Modified from aqt.sound.setup_audio
-    """
-    global audio_player
-    audio_player = aqt.sound.AVPlayer()
+    def _stop_if_playing(self):
+        if self.current_player and not self.no_interrupt:
+            self.current_player.stop()
 
-    taskman = mw.taskman
-    base_folder = mw.pm.base
-    media_folder = mw.col.media.dir()
+    def play_without_interrupt(self, file: Path):
+        """Audio played with this function will not be interrupted by other audio
+        except audio played through this function.
+        This function does not clear existing audio queue created by other play methods.
+        """
+        if self.current_player:
+            self.current_player.stop()
 
-    try:
-        try:  # 2.1.50+
-            mpvManager = aqt.sound.MpvManager(base_folder, media_folder)
-        except TypeError:
-            mpvManager = aqt.sound.MpvManager(base_folder)
-    except FileNotFoundError:
-        print("mpv not found, reverting to mplayer")
-    except aqt.mpv.MPVProcessError:
-        print("mpv too old, reverting to mplayer")
-
-    if mpvManager is not None:
-        audio_player.players.append(mpvManager)
-
-        if is_win:
-            try:  # 2.1.50+
-                mpvPlayer = aqt.sound.SimpleMpvPlayer(
-                    taskman, base_folder, media_folder
-                )
-            except TypeError:
-                mpvPlayer = aqt.sound.SimpleMpvPlayer(taskman, base_folder)
-            audio_player.players.append(mpvPlayer)
-    else:
-        try:
-            mplayer = aqt.sound.SimpleMplayerSlaveModePlayer(taskman, media_folder)
-        except TypeError:  # 2.1.50+
-            mplayer = aqt.sound.SimpleMplayerSlaveModePlayer(taskman)
-        audio_player.players.append(mplayer)
+        self.no_interrupt = True
+        tag = SoundOrVideoTag(filename=str(file.resolve()))
+        best_player = self._best_player_for_tag(tag)
+        if best_player:
+            self.current_player = best_player
+            gui_hooks.av_player_will_play(tag)
+            self.current_player.play(tag, self._on_play_without_interrupt_finished)
+        else:
+            print(f"ERROR: no players found for {tag}")
 
 
 def will_use_audio_player():
-    gui_hooks.collection_did_load.append(lambda _: _setup_audio_player())
-    gui_hooks.profile_will_close.append(lambda: audio_player.shutdown())
+    aqt.sound.av_player.no_interrupt = False
+    AVPlayer._on_play_without_interrupt_finished = (
+        CustomAVPlayer._on_play_without_interrupt_finished
+    )
+    AVPlayer._stop_if_playing = CustomAVPlayer._stop_if_playing
+    AVPlayer.play_without_interrupt = CustomAVPlayer.play_without_interrupt
 
 
 def audio(file: Path):
-    audio_player.play_file(str(file))
+    aqt.sound.av_player.play_without_interrupt(file)
 
 
 def add_script(web: Union[AnkiWebView, WebContent], js: str):

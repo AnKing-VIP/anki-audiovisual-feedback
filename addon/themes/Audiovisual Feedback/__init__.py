@@ -3,7 +3,6 @@ from pathlib import Path
 
 from aqt.reviewer import Reviewer
 from anki.cards import Card
-from aqt import gui_hooks
 from aqt.webview import WebContent
 
 from .. import resource_url, triggers, events
@@ -13,7 +12,6 @@ SOUNDS_DIR = (Path(__file__).parent / "sounds").resolve()
 
 
 def on_answer_card(reviewer: Reviewer, card: Card, ease: Literal[1, 2, 3, 4]):
-    # TODO: Fix for cards that has autoplay audios
     if ease == 1:
         ans = "again"
     elif ease == 2:
