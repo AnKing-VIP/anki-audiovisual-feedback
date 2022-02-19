@@ -13,6 +13,30 @@ class Ease(Enum):
     Good = 3
     Easy = 4
 
+    @staticmethod
+    def from_num(ease: Literal[1, 2, 3, 4], button_count: int) -> "Ease":
+        if button_count == 2:
+            if ease == 1:
+                return Ease.Again
+            else:
+                return Ease.Good
+        elif button_count == 3:
+            if ease == 1:
+                return Ease.Again
+            elif ease == 2:
+                return Ease.Good
+            else:
+                return Ease.Easy
+        else:
+            if ease == 1:
+                return Ease.Again
+            elif ease == 2:
+                return Ease.Hard
+            elif ease == 3:
+                return Ease.Good
+            else:
+                return Ease.Easy
+
 
 Func = TypeVar("Func")
 
@@ -94,30 +118,9 @@ def _on_answer_card(
 ) -> Tuple[bool, Literal[1, 2, 3, 4]]:
     button_count = mw.col.sched.answerButtons(card)
     ease_num = ease_tuple[1]
-    if button_count == 2:
-        if ease_num == 1:
-            ease = Ease.Again
-        else:
-            ease = Ease.Good
-    elif button_count == 3:
-        if ease_num == 1:
-            ease = Ease.Again
-        elif ease_num == 2:
-            ease = Ease.Good
-        else:
-            ease = Ease.Easy
-    else:
-        if ease_num == 1:
-            ease = Ease.Again
-        elif ease_num == 2:
-            ease = Ease.Hard
-        elif ease_num == 3:
-            ease = Ease.Good
-        else:
-            ease = Ease.Easy
+    ease = Ease.from_num(ease_num, button_count)
 
     answer_card.trigger(reviewer, card, ease)
-
     return ease_tuple
 
 
