@@ -47,6 +47,9 @@ def colorful_span(orig: str, color: str) -> str:
 def color_answer_button(
     buttons_tuple: Tuple[Tuple[int, str], ...], reviewer: Reviewer, card: Card
 ) -> Tuple[Tuple[int, str], ...]:
+    if not conf[f"themes.{THEME_NAME}.colorful_answer_button"]:
+        return buttons_tuple
+
     buttons = []
     for button in buttons_tuple:
         ease = Ease.from_num(button[0], len(buttons_tuple))

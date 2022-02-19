@@ -15,6 +15,7 @@ def theme_tab(conf_window: ConfigWindow):
         "Play visual effect ",
         "Play visual effect on answer",
     )
+    tab.checkbox(f"themes.{theme}.colorful_answer_button", "Colorful answer button ")
     tab.stretch()
 
 
