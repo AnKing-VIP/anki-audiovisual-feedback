@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from aqt import mw
-from . import triggers
+from .triggers import Ease
 
 
 def resource_url(file: str, resource: str) -> str:

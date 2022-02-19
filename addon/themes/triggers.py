@@ -1,9 +1,18 @@
-from typing import Callable, Literal, Optional, TypeVar, Generic, Union
+from typing import Callable, Literal, Optional, Tuple, TypeVar, Generic, Union
+from enum import Enum
 import os
 
 import anki
 import aqt
-from aqt import gui_hooks
+from aqt import gui_hooks, mw
+
+
+class Ease(Enum):
+    Again = 1
+    Hard = 2
+    Good = 3
+    Easy = 4
+
 
 Func = TypeVar("Func")
 
@@ -20,15 +29,11 @@ class Trigger(Generic[Func]):
 
 
 class AnswerCardTrigger(
-    Trigger[
-        Callable[
-            ["aqt.reviewer.Reviewer", "anki.cards.Card", Literal[1, 2, 3, 4]], None
-        ]
-    ]
+    Trigger[Callable[["aqt.reviewer.Reviewer", "anki.cards.Card", Ease], None]]
 ):
     """When answering(rating) card.
     # Arguments
-    reviewer, card, ease (1,2,3,4)
+    reviewer, card, ease
     """
 
     pass
@@ -82,6 +87,40 @@ def _on_webview_set_content(
         reviewer_page.trigger(web)
 
 
-gui_hooks.reviewer_did_answer_card.append(answer_card.trigger)
+def _on_answer_card(
+    ease_tuple: Tuple[bool, Literal[1, 2, 3, 4]],
+    reviewer: "aqt.reviewer.Reviewer",
+    card: "anki.card.Card",
+) -> Tuple[bool, Literal[1, 2, 3, 4]]:
+    button_count = mw.col.sched.answerButtons(card)
+    ease_num = ease_tuple[1]
+    if button_count == 2:
+        if ease_num == 1:
+            ease = Ease.Again
+        else:
+            ease = Ease.Good
+    elif button_count == 3:
+        if ease_num == 1:
+            ease = Ease.Again
+        elif ease_num == 2:
+            ease = Ease.Good
+        else:
+            ease = Ease.Easy
+    else:
+        if ease_num == 1:
+            ease = Ease.Again
+        elif ease_num == 2:
+            ease = Ease.Hard
+        elif ease_num == 3:
+            ease = Ease.Good
+        else:
+            ease = Ease.Easy
+
+    answer_card.trigger(reviewer, card, ease)
+
+    return ease_tuple
+
+
+gui_hooks.reviewer_will_answer_card.append(_on_answer_card)
 gui_hooks.webview_did_inject_style_into_page.append(_on_page_rendered)
 gui_hooks.webview_will_set_content.append(_on_webview_set_content)

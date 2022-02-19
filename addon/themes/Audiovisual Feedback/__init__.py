@@ -5,21 +5,21 @@ from aqt.reviewer import Reviewer
 from anki.cards import Card
 from aqt.webview import WebContent
 
-from .. import resource_url, theme_name, triggers, events
+from .. import resource_url, theme_name, triggers, events, Ease
 from .config import conf
 
 SOUNDS_DIR = (Path(__file__).parent / "sounds").resolve()
 THEME_NAME = theme_name(__file__)
 
 
-def on_answer_card(reviewer: Reviewer, card: Card, ease: Literal[1, 2, 3, 4]):
-    if ease == 1:
+def on_answer_card(reviewer: Reviewer, card: Card, ease: Ease):
+    if ease == Ease.Again:
         ans = "again"
-    elif ease == 2:
+    elif ease == Ease.Hard:
         ans = "hard"
-    elif ease == 3:
+    elif ease == Ease.Good:
         ans = "good"
-    elif ease == 4:
+    elif ease == Ease.Easy:
         ans = "easy"
 
     # Play sound effect
