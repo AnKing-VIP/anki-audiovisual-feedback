@@ -20,10 +20,10 @@
 
 #visualFeedback.good {
   opacity: 1;
-  box-shadow: 0px 0px 20px 5px #0f0;
+  box-shadow: 0px 0px 20px 5px #0e0;
 }
 
 #visualFeedback.easy {
   opacity: 1;
-  box-shadow: 0px 0px 20px 5px #00f;
+  box-shadow: 0px 0px 20px 5px #09f;
 }
