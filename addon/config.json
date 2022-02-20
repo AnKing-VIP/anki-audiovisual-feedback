@@ -1,14 +1,10 @@
 {
-    "theme": "Kitten Rewards",
     "version": {
         "major": -1,
         "minor": -1
     },
-    "themes": {
-        "Audiovisual Feedback": {
-            "sound_effect": true,
-            "visual_effect": true,
-            "colorful_answer_button": true
-        }
-    }
+    "sound_effect": true,
+    "visual_effect": true,
+    "colorful_answer_button": true,
+    "kitten_rewards": true
 }
