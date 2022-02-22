@@ -7,7 +7,7 @@ git submodule update --init --recursive
 ```
 
 ## Tests & Formatting
-This project uses [black], [mypy](https://github.com/python/mypy), and [pytest].
+This project uses [black] and [mypy](https://github.com/python/mypy).
 
 ```
 black .
@@ -17,7 +17,7 @@ pytest .
 
 You will need to install the following python packages to run black, mypy and pytest: 
 ```
-pip install aqt pyqt5-stubs mypy black pytest
+pip install aqt pyqt5-stubs mypy black
 ```
 
 # Building ankiaddon file
@@ -25,7 +25,7 @@ After cloning the repo, go into the repo directory and run the following command
 ```
 git submodule update --init addon/ankiaddonconfig
 ```
-After installing the git submodule, run the following command to create an `review_hotmouse.ankiaddon` file
+After installing the git submodule, run the following command to create an `audiovisual_feedback.ankiaddon` file
 ```
-cd addon ; zip -r ../review_hotmouse.ankiaddon * ; cd ../
+cd addon ; zip -r ../audiovisual_feedback.ankiaddon * ; cd ../
 ```
