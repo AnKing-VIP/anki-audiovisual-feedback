@@ -1,4 +1,4 @@
-from typing import Callable, Literal, Optional, Tuple, TypeVar, Generic, Union
+from typing import Any, Callable, Literal, Optional, Tuple, TypeVar, Generic, Union
 from enum import Enum
 import os
 
@@ -14,7 +14,7 @@ class Ease(Enum):
     Easy = 4
 
     @staticmethod
-    def from_num(ease: Literal[1, 2, 3, 4], button_count: int) -> "Ease":
+    def from_num(ease: int, button_count: int) -> "Ease":
         if button_count == 2:
             if ease == 1:
                 return Ease.Again
@@ -44,12 +44,12 @@ Func = TypeVar("Func")
 class Trigger(Generic[Func]):
     _func: Optional[Func] = None
 
-    def __call__(self, func: Func):
+    def __call__(self, func: Func) -> None:
         self._func = func
 
-    def trigger(self, *args, **kwargs):
+    def trigger(self, *args: Any, **kwargs: Any) -> None:
         if self._func is not None:
-            self._func(*args, **kwargs)
+            self._func(*args, **kwargs)  # type: ignore
 
 
 class AnswerCardTrigger(
@@ -106,7 +106,7 @@ def _on_page_rendered(web: "aqt.webview.AnkiWebView") -> None:
 
 def _on_webview_set_content(
     web: "aqt.webview.WebContent", context: Union[object, None]
-):
+) -> None:
     if isinstance(context, aqt.reviewer.Reviewer):
         reviewer_page.trigger(web)
 
@@ -114,7 +114,7 @@ def _on_webview_set_content(
 def _on_answer_card(
     ease_tuple: Tuple[bool, Literal[1, 2, 3, 4]],
     reviewer: "aqt.reviewer.Reviewer",
-    card: "anki.card.Card",
+    card: "anki.cards.Card",
 ) -> Tuple[bool, Literal[1, 2, 3, 4]]:
     button_count = mw.col.sched.answerButtons(card)
     ease_num = ease_tuple[1]

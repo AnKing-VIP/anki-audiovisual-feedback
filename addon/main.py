@@ -22,7 +22,7 @@ def resource_url(resource: str) -> str:
     return f"/_addons/{mw.addonManager.addonFromModule(__name__)}/{resource}"
 
 
-def on_answer_card(reviewer: Reviewer, card: Card, ease: Ease):
+def on_answer_card(reviewer: Reviewer, card: Card, ease: Ease) -> None:
     if ease == Ease.Again:
         ans = "again"
     elif ease == Ease.Hard:
@@ -42,7 +42,7 @@ def on_answer_card(reviewer: Reviewer, card: Card, ease: Ease):
         reviewer.web.eval(f"showVisualFeedback('{ans}')")
 
 
-def on_reviewer_page(web: WebContent):
+def on_reviewer_page(web: WebContent) -> None:
     conf.load()
     web.body += "<div id='visualFeedback'></div>"
     web.css.append(resource_url("web/reviewer.css"))
@@ -91,7 +91,7 @@ def random_image() -> str:
     return resource_url(f"images/{str(rel_path)}")
 
 
-def on_congrats(web: AnkiWebView):
+def on_congrats(web: AnkiWebView) -> None:
     """Insert cat image onto Congrats page"""
     if not conf["kitten_rewards"]:
         return

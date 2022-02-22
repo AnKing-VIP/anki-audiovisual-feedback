@@ -1,7 +1,7 @@
 from .ankiaddonconfig import ConfigManager, ConfigWindow
 
 
-def general_tab(conf_window: ConfigWindow):
+def general_tab(conf_window: ConfigWindow) -> None:
     tab = conf_window.add_tab("General")
     tab.checkbox(
         "sound_effect",
