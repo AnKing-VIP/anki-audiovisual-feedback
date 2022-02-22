@@ -15,8 +15,8 @@ config = mw.addonManager.getConfig(__name__)
 
 
 class Version:
-    @classmethod
-    def from_string(cls: Type["Version"], ver_str: str) -> "Version":
+    @staticmethod
+    def from_string(ver_str: str) -> "Version":
         ver = [int(i) for i in ver_str.split(".")]
         version = Version(from_config=False)
         version.set_version(ver[0], ver[1])
