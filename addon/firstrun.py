@@ -75,7 +75,7 @@ compat(prev_version)
 # Move themes to user_files
 ################################################
 def move_theme_to_user_files() -> None:
-    addon_themes_dir = Path(__file__).parent / "themes"
+    addon_themes_dir = Path(__file__).parent / "default" / "themes"
     user_themes_dir = Path(__file__).parent / "user_files" / "themes"
     user_themes_dir.mkdir(parents=True, exist_ok=True)
 
