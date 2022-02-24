@@ -1,8 +1,8 @@
 # firstrun.py v1.1
 
-from typing import Type
 from pathlib import Path
 import os
+import shutil
 
 from aqt import mw
 
@@ -70,3 +70,23 @@ prev_version = Version()
 save_current_version_to_conf()
 
 compat(prev_version)
+
+
+# Move themes to user_files
+################################################
+def move_theme_to_user_files() -> None:
+    addon_themes_dir = Path(__file__).parent / "themes"
+    user_themes_dir = Path(__file__).parent / "user_files" / "themes"
+    user_themes_dir.mkdir(parents=True, exist_ok=True)
+
+    for child in addon_themes_dir.iterdir():
+        if not child.is_dir():
+            continue
+        theme_name = child.name
+        move_to_dir = user_themes_dir / theme_name
+        if move_to_dir.exists():
+            continue
+        shutil.copytree(child, move_to_dir)
+
+
+move_theme_to_user_files()

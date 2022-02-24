@@ -6,5 +6,6 @@
     "sound_effect": true,
     "visual_effect": true,
     "colorful_answer_button": true,
-    "kitten_rewards": true
+    "kitten_rewards": true,
+    "theme": "Flashcard"
 }

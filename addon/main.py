@@ -11,15 +11,16 @@ from . import events, triggers
 from .triggers import Ease
 from .config import conf
 
-SOUNDS_DIR = (Path(__file__).parent / "sounds").resolve()
+THEME_DIR: Path = Path(__file__).parent / "user_files" / "themes" / conf["theme"]
+SOUNDS_DIR = THEME_DIR / "sounds"
 
 
-mw.addonManager.setWebExports(__name__, r".*")
+mw.addonManager.setWebExports(__name__, r"user_files/themes/.*")
 
 
 def resource_url(resource: str) -> str:
     """resource: relative path from its theme directory"""
-    return f"/_addons/{mw.addonManager.addonFromModule(__name__)}/{resource}"
+    return f"/_addons/{mw.addonManager.addonFromModule(__name__)}/user_files/themes/{conf['theme']}/{resource}"
 
 
 def on_answer_card(reviewer: Reviewer, card: Card, ease: Ease) -> None:
@@ -44,9 +45,8 @@ def on_answer_card(reviewer: Reviewer, card: Card, ease: Ease) -> None:
 
 def on_reviewer_page(web: WebContent) -> None:
     conf.load()
-    web.body += "<div id='visualFeedback'></div>"
-    web.css.append(resource_url("web/reviewer.css"))
-    web.js.append(resource_url("web/reviewer.js"))
+    web.css.append(resource_url("reviewer.css"))
+    web.js.append(resource_url("reviewer.js"))
 
 
 # Colorful Answer Buttons
@@ -84,7 +84,7 @@ def color_answer_button(
 
 def random_image() -> str:
     """Returns random cat image url"""
-    dir = Path(__file__).parent / "images"
+    dir = Path(__file__).parent / "user_files" / "themes" / conf["theme"] / "images"
     files = list(dir.glob("**/*"))
     file = random.choice(files)
     rel_path = file.relative_to(dir)
