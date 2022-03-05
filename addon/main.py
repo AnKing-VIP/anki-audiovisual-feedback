@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Any, Tuple
 from pathlib import Path
 import random
 
@@ -46,15 +46,15 @@ def on_answer_card(reviewer: Reviewer, card: Card, ease: Ease) -> None:
 
 def on_reviewer_page(web: WebContent) -> None:
     conf.load()
-    web.css.append(resource_url("reviewer.css"))
-    web.js.append(resource_url("reviewer.js"))
+    web.css.append(resource_url("web/reviewer.css"))
+    web.js.append(resource_url("web/reviewer.js"))
 
 
 # Kitten Rewards
 ##################
 
 
-def random_file(dir: Path) -> str:
+def random_file_url(dir: Path) -> str:
     """Returns random cat image url"""
     files = list(dir.glob("**/*"))
     file = random.choice(files)
@@ -64,36 +64,56 @@ def random_file(dir: Path) -> str:
 
 def on_congrats(web: AnkiWebView) -> None:
     """Insert cat image onto Congrats page"""
-    if not conf["kitten_rewards"]:
-        return
     dir = THEME_DIR / "images" / "congrats"
     if not dir.is_dir():
         return
 
-    image_url = random_file(dir)
-    html = (
-        """
-<div id="cat-container">
-    <img id="cat-image" src="%s">
-</div>
-    """
-        % image_url
-    )
-    style = """
-#cat-container {
-    display: flex;
-    justify-content: center;
-}
-#cat-image {
-    max-width: 30em;
-    margin: auto 0;
-}
-    """
+    css_file = THEME_DIR / "web" / "congrats.css"
+    if css_file.is_file():
+        web.eval(
+            """
+                (() => {
+                const style = document.createElement("link")
+                style.rel = "stylesheet"
+                style.type = "text/css"
+                style.href = `%s`
+                document.head.appendChild(style)
+            })()
+            """
+            % resource_url("web/congrats.css")
+        )
 
-    events.add_style(web, style)
-    events.add_html(web, html, to="top")
+    js_file = THEME_DIR / "web" / "congrats.js"
+    if js_file.is_file():
+        web.eval(
+            """
+                (() => {
+                const script = document.createElement("script")
+                script.src = `%s`
+                document.head.appendChild(script)
+            })()
+            """
+            % resource_url("web/congrats.js")
+        )
 
 
+def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[bool, Any]:
+    addon_key = "audiovisualFeedback#"
+    if not message.startswith(addon_key):
+        return handled
+
+    body = message[len(addon_key) :]
+    if body.startswith("randomFile#"):
+        path = body[len("randomFile#") :]
+        value = random_file_url(THEME_DIR / path)
+        print("randomFile")
+        print(value)
+        return (True, value)
+
+    return handled
+
+
+gui_hooks.webview_did_receive_js_message.append(on_pycmd)
 events.will_use_audio_player()
 triggers.answer_card(on_answer_card)
 triggers.reviewer_page(on_reviewer_page)

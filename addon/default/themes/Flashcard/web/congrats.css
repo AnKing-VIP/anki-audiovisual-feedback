@@ -1,0 +1,8 @@
+#cat-container {
+  display: flex;
+  justify-content: center;
+}
+#cat-image {
+  max-width: 30em;
+  margin: auto 0;
+}
