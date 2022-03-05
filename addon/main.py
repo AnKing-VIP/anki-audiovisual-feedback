@@ -54,21 +54,23 @@ def on_reviewer_page(web: WebContent) -> None:
 ##################
 
 
-def random_image() -> str:
+def random_file(dir: Path) -> str:
     """Returns random cat image url"""
-    dir = Path(__file__).parent / "user_files" / "themes" / conf["theme"] / "images"
     files = list(dir.glob("**/*"))
     file = random.choice(files)
-    rel_path = file.relative_to(dir)
-    return resource_url(f"images/{str(rel_path)}")
+    rel_path = file.relative_to(THEME_DIR)
+    return resource_url(f"{str(rel_path)}")
 
 
 def on_congrats(web: AnkiWebView) -> None:
     """Insert cat image onto Congrats page"""
     if not conf["kitten_rewards"]:
         return
+    dir = THEME_DIR / "images" / "congrats"
+    if not dir.is_dir():
+        return
 
-    image_url = random_image()
+    image_url = random_file(dir)
     html = (
         """
 <div id="cat-container">
