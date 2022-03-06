@@ -12,9 +12,5 @@
         })
     }
 
-    if (document.readyState === "complete") {
-        onLoad()
-    } else {
-        window.addEventListener("load", onLoad)
-    }
+    document.readyState === "complete" ? onLoad() : window.addEventListener("load", onLoad)
 })()
