@@ -1,6 +1,7 @@
-from typing import Any, Tuple
+from typing import Any, List, Tuple
 from pathlib import Path
 import random
+import json
 
 from aqt.reviewer import Reviewer
 from anki.cards import Card
@@ -13,7 +14,6 @@ from .triggers import Ease
 from .config import conf
 
 THEME_DIR: Path = Path(__file__).parent / "user_files" / "themes" / conf["theme"]
-SOUNDS_DIR = THEME_DIR / "sounds"
 
 
 mw.addonManager.setWebExports(__name__, r"user_files/themes/.*")
@@ -36,8 +36,8 @@ def on_answer_card(reviewer: Reviewer, card: Card, ease: Ease) -> None:
 
     # Play sound effect
     if conf["sound_effect"]:
-        audio_file = SOUNDS_DIR / f"{ans}.m4a"
-        events.audio(audio_file)
+        audio_dir = THEME_DIR / "sounds" / ans
+        events.audio(random_file(audio_dir))
 
     # Play visual effect
     if conf["visual_effect"]:
@@ -50,8 +50,9 @@ def on_reviewer_page(web: WebContent) -> None:
     web.js.append(resource_url("web/reviewer.js"))
 
 
-# Kitten Rewards
-##################
+def random_file(dir: Path) -> Path:
+    files = list(dir.glob("**/*"))
+    return random.choice(files)
 
 
 def random_file_url(dir: Path) -> str:
@@ -60,6 +61,16 @@ def random_file_url(dir: Path) -> str:
     file = random.choice(files)
     rel_path = file.relative_to(THEME_DIR)
     return resource_url(f"{str(rel_path)}")
+
+
+def all_files_url(dir: Path) -> List[str]:
+    files = list(
+        map(
+            lambda file: resource_url(str(file.relative_to(THEME_DIR))),
+            dir.glob("**/*"),
+        )
+    )
+    return files
 
 
 def on_congrats(web: AnkiWebView) -> None:
@@ -95,6 +106,9 @@ def on_congrats(web: AnkiWebView) -> None:
             """
             % resource_url("web/congrats.js")
         )
+    audio_dir = THEME_DIR / "sounds" / "congrats"
+    if audio_dir.is_dir():
+        events.audio(random_file(audio_dir))
 
 
 def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[bool, Any]:
@@ -105,10 +119,12 @@ def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[boo
     body = message[len(addon_key) :]
     if body.startswith("randomFile#"):
         path = body[len("randomFile#") :]
-        value = random_file_url(THEME_DIR / path)
-        print("randomFile")
-        print(value)
-        return (True, value)
+        return (True, random_file_url(THEME_DIR / path))
+
+    elif body.startswith("files#"):
+        path = body[len("files#") :]
+        value = all_files_url(THEME_DIR / path)
+        return (True, json.dumps(value))
 
     return handled
 
