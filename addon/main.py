@@ -147,7 +147,7 @@ def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[boo
 
         disableShowAnswer = True
         context.bottom.web.eval(
-            """document.getElementById("innertable").style.display = "none";"""
+            """document.getElementById("innertable").style.visibility = "hidden";"""
         )
         return (True, None)
 
@@ -157,7 +157,7 @@ def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[boo
 
         disableShowAnswer = False
         context.bottom.web.eval(
-            """document.getElementById("innertable").style.removeProperty("display")"""
+            """document.getElementById("innertable").style.visibility = "visible";"""
         )
         return (True, None)
     else:
