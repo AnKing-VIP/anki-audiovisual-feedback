@@ -81,10 +81,16 @@ def on_congrats(web: AnkiWebView) -> None:
 
     css_file = THEME_DIR / "web" / "congrats.css"
     if css_file.is_file():
+        # Sometimes this function is triggered twice.
+        # So check if it has already been run by checking if element already exist
         web.eval(
             """
-                (() => {
+            (() => {
+                const id = "audiovisualFeedbackStyle"
+                if (document.getElementById(id)) { return }
+
                 const style = document.createElement("link")
+                style.id = id
                 style.rel = "stylesheet"
                 style.type = "text/css"
                 style.href = `%s`
@@ -98,8 +104,12 @@ def on_congrats(web: AnkiWebView) -> None:
     if js_file.is_file():
         web.eval(
             """
-                (() => {
+            (() => {
+                const id = "audiovisualFeedbackScript"
+                if (document.getElementById(id)) { return }
+                  
                 const script = document.createElement("script")
+                script.id = id
                 script.src = `%s`
                 document.head.appendChild(script)
             })()
