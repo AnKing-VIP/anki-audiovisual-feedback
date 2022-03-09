@@ -1,4 +1,4 @@
-from typing import Any, List, Tuple
+from typing import Any, Callable, List, Tuple
 from pathlib import Path
 import random
 import json
@@ -7,6 +7,7 @@ from aqt.reviewer import Reviewer
 from anki.cards import Card
 from aqt.webview import WebContent, AnkiWebView
 from aqt import mw, gui_hooks
+from anki.hooks import wrap
 
 
 from . import events, triggers
@@ -17,6 +18,8 @@ THEME_DIR: Path = Path(__file__).parent / "user_files" / "themes" / conf["theme"
 
 
 mw.addonManager.setWebExports(__name__, r"user_files/themes/.*")
+
+disableShowAnswer = False
 
 
 def resource_url(resource: str) -> str:
@@ -122,6 +125,8 @@ def on_congrats(web: AnkiWebView) -> None:
 
 
 def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[bool, Any]:
+    global disableShowAnswer
+
     addon_key = "audiovisualFeedback#"
     if not message.startswith(addon_key):
         return handled
@@ -136,11 +141,52 @@ def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[boo
         value = all_files_url(THEME_DIR / path)
         return (True, json.dumps(value))
 
+    elif body == "disableShowAnswer":
+        if not isinstance(context, Reviewer):
+            return (False, None)
+
+        disableShowAnswer = True
+        context.bottom.web.eval(
+            """document.getElementById("innertable").style.display = "none";"""
+        )
+        return (True, None)
+
+    elif body == "enableShowAnswer":
+        if not isinstance(context, Reviewer):
+            return (False, None)
+
+        disableShowAnswer = False
+        context.bottom.web.eval(
+            """document.getElementById("innertable").style.removeProperty("display")"""
+        )
+        return (True, None)
+    else:
+        print(f"Invalid pycmd message for Audiovisual Feedback: {body}")
+
     return handled
 
 
+def patched_reviewer_show_answer(
+    reviewer: Reviewer, _old: Callable[[Reviewer], None]
+) -> None:
+    if disableShowAnswer == False:
+        return _old(reviewer)
+
+
+def on_state_will_change(new_state: str, old_state: str) -> None:
+    """Reset disableShowAnswer when starting a review session."""
+    global disableShowAnswer
+    if new_state == "review":
+        disableShowAnswer = False
+
+
 gui_hooks.webview_did_receive_js_message.append(on_pycmd)
+gui_hooks.state_will_change.append(on_state_will_change)
 events.will_use_audio_player()
 triggers.answer_card(on_answer_card)
 triggers.reviewer_page(on_reviewer_page)
 triggers.congrats_page(on_congrats)
+
+Reviewer._showAnswer = wrap(  # type: ignore
+    Reviewer._showAnswer, patched_reviewer_show_answer, "around"
+)
