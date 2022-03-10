@@ -1,4 +1,4 @@
-from typing import Any, Callable, List, Tuple
+from typing import Any, Callable, Iterable, List, Tuple
 from pathlib import Path
 import random
 import json
@@ -56,27 +56,35 @@ def on_reviewer_page(web: WebContent) -> None:
     web.js.append(resource_url("web/reviewer.js"))
 
 
+def files_in_dir(dir: Path) -> Iterable[Path]:
+    "Get all files in dir, without automatic hidden files such as '.DS_Store'"
+    return filter(
+        lambda file: file.name[0] != "."
+        and file.name not in ("desktop.ini", "Thumbs.db", "ehthumbs.db", "__MACOSX")
+        and file.suffix not in ("sys", "desktop"),
+        dir.glob("**/*"),
+    )
+
+
 def random_file(dir: Path) -> Path:
-    files = list(dir.glob("**/*"))
+    files = list(files_in_dir(dir))
     return random.choice(files)
 
 
 def random_file_url(dir: Path) -> str:
     """Returns random cat image url"""
-    files = list(dir.glob("**/*"))
-    file = random.choice(files)
+    file = random_file(dir)
     rel_path = file.relative_to(THEME_DIR)
     return resource_url(f"{str(rel_path)}")
 
 
 def all_files_url(dir: Path) -> List[str]:
-    files = list(
+    return list(
         map(
             lambda file: resource_url(str(file.relative_to(THEME_DIR))),
-            dir.glob("**/*"),
+            files_in_dir(dir),
         )
     )
-    return files
 
 
 def on_congrats(web: AnkiWebView) -> None:
