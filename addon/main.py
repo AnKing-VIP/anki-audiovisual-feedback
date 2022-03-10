@@ -12,10 +12,11 @@ from anki.hooks import wrap
 
 from . import events, triggers
 from .triggers import Ease
-from .config import conf
+from .ankiaddonconfig import ConfigManager
+
+conf = ConfigManager()
 
 THEME_DIR: Path = Path(__file__).parent / "user_files" / "themes" / conf["theme"]
-
 
 mw.addonManager.setWebExports(__name__, r"user_files/themes/.*")
 
@@ -48,7 +49,9 @@ def on_answer_card(reviewer: Reviewer, card: Card, ease: Ease) -> None:
 
 
 def on_reviewer_page(web: WebContent) -> None:
+    global THEME_DIR
     conf.load()
+    THEME_DIR = Path(__file__).parent / "user_files" / "themes" / conf["theme"]
     web.css.append(resource_url("web/reviewer.css"))
     web.js.append(resource_url("web/reviewer.js"))
 
