@@ -1,10 +1,10 @@
 (() => {
     const onLoad = () => {
         const div = document.createElement("div")
-        div.id = "cat-container"
+        div.id = "avf-img-container"
     
         const img = document.createElement("img")
-        img.id = "cat-image"
+        img.id = "avf-img"
         pycmd("audiovisualFeedback#randomFile#images/congrats", (src) => {
             img.src = src
             div.appendChild(img)

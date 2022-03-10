@@ -1,8 +1,8 @@
-#cat-container {
+#avf-img-container {
   display: flex;
   justify-content: center;
 }
-#cat-image {
+#avf-img {
   max-width: 30em;
   margin: auto 0;
 }
