@@ -1,0 +1,6 @@
+Photos came from various free sources on the web.
+
+Sound files came from freesound.org. The original links were lost due to editing and meshing. Most could still be tracked down from the filename.
+
+Theme created by lovac42 for Fanfare add-on https://github.com/lovac42/Fanfare
+modified by BlueGreenMagick to work on this new add-on

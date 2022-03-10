@@ -35,20 +35,16 @@
         if (timeout) {
             clearTimeout(timeout)
         }
-        pycmd("audiovisualFeedback#disableShowAnswer")
         
         const img = document.createElement("img")
         img.src = randomImageURL(ease)
         container.appendChild(img)
         container.classList.add("visible")
-        card.classList.add("hidden")
 
         timeout = setTimeout((c) => {
             container.classList.remove("visible")
-            card.classList.remove("hidden")
             container.removeChild(img)
-            pycmd("audiovisualFeedback#enableShowAnswer")
-        }, 1500, ease)
+        }, 300, ease)
     }
 })()
 
