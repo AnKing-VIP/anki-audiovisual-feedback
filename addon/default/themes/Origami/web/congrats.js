@@ -1,0 +1,16 @@
+(() => {
+    const onLoad = () => {
+        const div = document.createElement("div")
+        div.id = "avf-img-container"
+    
+        const img = document.createElement("img")
+        img.id = "avf-img"
+        pycmd("audiovisualFeedback#randomFile#images/congrats", (src) => {
+            img.src = src
+            div.appendChild(img)
+            document.body.insertBefore(div, document.body.firstChild)    
+        })
+    }
+
+    document.readyState === "complete" ? onLoad() : window.addEventListener("load", onLoad)
+})()
