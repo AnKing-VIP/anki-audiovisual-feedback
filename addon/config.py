@@ -28,9 +28,6 @@ def general_tab(conf_window: ConfigWindow) -> None:
         "Play visual effect ",
         "Play visual effect on answer",
     )
-    tab.checkbox(
-        "kitten_rewards", "Kitten rewards", "Show cat images after finishing deck"
-    )
     tab.stretch()
 
 
