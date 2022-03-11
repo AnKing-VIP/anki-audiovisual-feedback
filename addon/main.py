@@ -1,18 +1,21 @@
-from typing import Any, Callable, Iterable, List, Optional, Tuple
+from typing import Any, Callable, Iterable, List, Literal, Optional, Tuple, Union
 from pathlib import Path
 import random
 import json
+import os
 
 from aqt.reviewer import Reviewer
 from anki.cards import Card
 from aqt.webview import WebContent, AnkiWebView
 from aqt import mw, gui_hooks
 from anki.hooks import wrap
+import aqt
+import anki
 
-
-from . import events, triggers
-from .triggers import Ease
+from . import events
+from .ease import Ease
 from .ankiaddonconfig import ConfigManager
+
 
 conf = ConfigManager()
 
@@ -28,7 +31,13 @@ def resource_url(resource: str) -> str:
     return f"/_addons/{mw.addonManager.addonFromModule(__name__)}/user_files/themes/{conf['theme']}/{resource}"
 
 
-def on_answer_card(reviewer: Reviewer, card: Card, ease: Ease) -> None:
+def on_answer_card(
+    ease_tuple: Tuple[bool, Literal[1, 2, 3, 4]], reviewer: Reviewer, card: Card
+) -> Tuple[bool, Literal[1, 2, 3, 4]]:
+    button_count = mw.col.sched.answerButtons(card)
+    ease_num = ease_tuple[1]
+    ease = Ease.from_num(ease_num, button_count)
+
     if ease == Ease.Again:
         ans = "again"
     elif ease == Ease.Hard:
@@ -46,6 +55,8 @@ def on_answer_card(reviewer: Reviewer, card: Card, ease: Ease) -> None:
     # Play visual effect
     if conf["visual_effect"]:
         reviewer.web.eval(f"showVisualFeedback('{ans}')")
+
+    return ease_tuple
 
 
 def on_reviewer_page(web: WebContent) -> None:
@@ -94,7 +105,7 @@ def all_files_url(dir: Path) -> List[str]:
     )
 
 
-def on_congrats(web: AnkiWebView) -> None:
+def on_congrats_page(web: AnkiWebView) -> None:
     """Insert cat image onto Congrats page"""
     dir = THEME_DIR / "images" / "congrats"
     if not dir.is_dir():
@@ -186,13 +197,6 @@ def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[boo
     return handled
 
 
-def patched_reviewer_show_answer(
-    reviewer: Reviewer, _old: Callable[[Reviewer], None]
-) -> None:
-    if disableShowAnswer == False:
-        return _old(reviewer)
-
-
 def on_state_will_change(new_state: str, old_state: str) -> None:
     """Reset disableShowAnswer when starting a review session."""
     global disableShowAnswer
@@ -200,12 +204,33 @@ def on_state_will_change(new_state: str, old_state: str) -> None:
         disableShowAnswer = False
 
 
+def _on_page_rendered(web: AnkiWebView) -> None:
+    path = web.page().url().path()  # .path() removes "#night"
+    name = os.path.basename(path)
+    if name == "congrats.html":
+        on_congrats_page(web)
+
+
+def _on_webview_set_content(
+    web: "aqt.webview.WebContent", context: Union[object, None]
+) -> None:
+    if isinstance(context, aqt.reviewer.Reviewer):
+        on_reviewer_page(web)
+
+
+def patched_reviewer_show_answer(
+    reviewer: Reviewer, _old: Callable[[Reviewer], None]
+) -> None:
+    if disableShowAnswer == False:
+        return _old(reviewer)
+
+
+events.will_use_audio_player()
 gui_hooks.webview_did_receive_js_message.append(on_pycmd)
 gui_hooks.state_will_change.append(on_state_will_change)
-events.will_use_audio_player()
-triggers.answer_card(on_answer_card)
-triggers.reviewer_page(on_reviewer_page)
-triggers.congrats_page(on_congrats)
+gui_hooks.reviewer_will_answer_card.append(on_answer_card)
+gui_hooks.webview_did_inject_style_into_page.append(_on_page_rendered)
+gui_hooks.webview_will_set_content.append(_on_webview_set_content)
 
 Reviewer._showAnswer = wrap(  # type: ignore
     Reviewer._showAnswer, patched_reviewer_show_answer, "around"
