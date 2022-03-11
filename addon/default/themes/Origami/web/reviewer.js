@@ -2,6 +2,7 @@
     let goodImages;
     let againImages;
 
+    // May return null
     const randomImageURL = (ease) => {
         let array;
         if (ease === "good" || ease === "easy") {
@@ -9,6 +10,8 @@
         } else {
             array = againImages
         }
+        if (array.length == 0) return null
+
         return array[Math.floor(Math.random() * array.length)]
     }
 
@@ -36,8 +39,11 @@
             clearTimeout(timeout)
         }
         
+        const imgUrl = randomImageURL(ease)
+        if (imgUrl === null) return 
+
         const img = document.createElement("img")
-        img.src = randomImageURL(ease)
+        img.src = imgUrl
         container.appendChild(img)
         container.classList.add("visible")
 

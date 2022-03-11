@@ -6,6 +6,7 @@
         const img = document.createElement("img")
         img.id = "avf-img"
         pycmd("audiovisualFeedback#randomFile#images/congrats", (src) => {
+            if (src == null) return
             img.src = src
             div.appendChild(img)
             document.body.insertBefore(div, document.body.firstChild)    

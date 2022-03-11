@@ -9,6 +9,8 @@
         } else {
             array = againImages
         }
+        if (array.length == 0) return null
+
         return array[Math.floor(Math.random() * array.length)]
     }
 
@@ -35,10 +37,14 @@
         if (timeout) {
             clearTimeout(timeout)
         }
+
+        const imgUrl = randomImageURL(ease)
+        if (imgUrl === null) return 
+
         pycmd("audiovisualFeedback#disableShowAnswer")
         
         const img = document.createElement("img")
-        img.src = randomImageURL(ease)
+        img.src = imgUrl
         container.appendChild(img)
         container.classList.add("visible")
         card.classList.add("hidden")

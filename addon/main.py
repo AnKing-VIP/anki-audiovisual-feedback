@@ -1,4 +1,4 @@
-from typing import Any, Callable, Iterable, List, Tuple
+from typing import Any, Callable, Iterable, List, Optional, Tuple
 from pathlib import Path
 import random
 import json
@@ -66,19 +66,26 @@ def files_in_dir(dir: Path) -> Iterable[Path]:
     )
 
 
-def random_file(dir: Path) -> Path:
+def random_file(dir: Path) -> Optional[Path]:
     files = list(files_in_dir(dir))
-    return random.choice(files)
+    if len(files) == 0:
+        return None
+    else:
+        return random.choice(files)
 
 
-def random_file_url(dir: Path) -> str:
+def random_file_url(dir: Path) -> Optional[str]:
     """Returns random cat image url"""
     file = random_file(dir)
+    if file is None:
+        return None
+
     rel_path = file.relative_to(THEME_DIR)
     return resource_url(f"{str(rel_path)}")
 
 
 def all_files_url(dir: Path) -> List[str]:
+    "May return an empty list"
     return list(
         map(
             lambda file: resource_url(str(file.relative_to(THEME_DIR))),
@@ -132,7 +139,9 @@ def on_congrats(web: AnkiWebView) -> None:
         )
     audio_dir = THEME_DIR / "sounds" / "congrats"
     if audio_dir.is_dir():
-        events.audio(random_file(audio_dir))
+        audio_file = random_file(audio_dir)
+        if audio_file is not None:
+            events.audio(audio_file)
 
 
 def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[bool, Any]:
