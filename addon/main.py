@@ -12,7 +12,7 @@ from anki.hooks import wrap
 import aqt
 import anki
 
-from . import events
+from . import audios
 from .ease import Ease
 from .ankiaddonconfig import ConfigManager
 
@@ -52,13 +52,12 @@ def on_answer_card(
         audio_dir = THEME_DIR / "sounds" / ans
         file = random_file(audio_dir)
         if file is not None:
-            events.audio(file)
+            audios.audio(file)
 
     # Play visual effect
-    if conf["visual_effect"]:
-        reviewer.web.eval(
-            f"if (typeof showVisualFeedback === 'function') showVisualFeedback('{ans}')"
-        )
+    reviewer.web.eval(
+        f"if (typeof showVisualFeedback === 'function') showVisualFeedback('{ans}')"
+    )
 
     return ease_tuple
 
@@ -153,7 +152,7 @@ def on_congrats_page(web: AnkiWebView) -> None:
     if audio_dir.is_dir():
         audio_file = random_file(audio_dir)
         if audio_file is not None:
-            events.audio(audio_file)
+            audios.audio(audio_file)
 
 
 def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[bool, Any]:
@@ -226,7 +225,7 @@ def patched_reviewer_show_answer(
         return _old(reviewer)
 
 
-events.will_use_audio_player()
+audios.will_use_audio_player()
 gui_hooks.webview_did_receive_js_message.append(on_pycmd)
 gui_hooks.state_will_change.append(on_state_will_change)
 gui_hooks.reviewer_will_answer_card.append(on_answer_card)
