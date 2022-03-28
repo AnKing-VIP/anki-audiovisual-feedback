@@ -32,6 +32,12 @@ def resource_url(resource: str) -> str:
     return f"/_addons/{mw.addonManager.addonFromModule(__name__)}/user_files/themes/{conf['theme']}/{resource}"
 
 
+def refresh_conf() -> None:
+    global THEME_DIR
+    conf.load()
+    THEME_DIR = Path(__file__).parent / "user_files" / "themes" / conf["theme"]
+
+
 def on_answer_card(
     ease_tuple: Tuple[bool, Literal[1, 2, 3, 4]], reviewer: Reviewer, card: Card
 ) -> Tuple[bool, Literal[1, 2, 3, 4]]:
@@ -64,9 +70,7 @@ def on_answer_card(
 
 
 def on_reviewer_page(web: WebContent) -> None:
-    global THEME_DIR
-    conf.load()
-    THEME_DIR = Path(__file__).parent / "user_files" / "themes" / conf["theme"]
+    refresh_conf()
     if (THEME_DIR / "web" / "reviewer.css").is_file():
         web.css.append(resource_url("web/reviewer.css"))
     if (THEME_DIR / "web" / "reviewer.js").is_file():
@@ -112,6 +116,7 @@ def all_files_url(dir: Path) -> List[str]:
 
 
 def on_congrats_page(web: AnkiWebView) -> None:
+    refresh_conf()
     css_file = THEME_DIR / "web" / "congrats.css"
     if css_file.is_file():
         # Sometimes this function is triggered twice.
