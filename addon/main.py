@@ -50,11 +50,15 @@ def on_answer_card(
     # Play sound effect
     if conf["sound_effect"]:
         audio_dir = THEME_DIR / "sounds" / ans
-        events.audio(random_file(audio_dir))
+        file = random_file(audio_dir)
+        if file is not None:
+            events.audio(file)
 
     # Play visual effect
     if conf["visual_effect"]:
-        reviewer.web.eval(f"showVisualFeedback('{ans}')")
+        reviewer.web.eval(
+            f"if (typeof showVisualFeedback === 'function') showVisualFeedback('{ans}')"
+        )
 
     return ease_tuple
 
@@ -63,8 +67,10 @@ def on_reviewer_page(web: WebContent) -> None:
     global THEME_DIR
     conf.load()
     THEME_DIR = Path(__file__).parent / "user_files" / "themes" / conf["theme"]
-    web.css.append(resource_url("web/reviewer.css"))
-    web.js.append(resource_url("web/reviewer.js"))
+    if (THEME_DIR / "web" / "reviewer.css").is_file():
+        web.css.append(resource_url("web/reviewer.css"))
+    if (THEME_DIR / "web" / "reviewer.js").is_file():
+        web.js.append(resource_url("web/reviewer.js"))
 
 
 def files_in_dir(dir: Path) -> Iterable[Path]:
@@ -106,11 +112,6 @@ def all_files_url(dir: Path) -> List[str]:
 
 
 def on_congrats_page(web: AnkiWebView) -> None:
-    """Insert cat image onto Congrats page"""
-    dir = THEME_DIR / "images" / "congrats"
-    if not dir.is_dir():
-        return
-
     css_file = THEME_DIR / "web" / "congrats.css"
     if css_file.is_file():
         # Sometimes this function is triggered twice.
