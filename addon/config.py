@@ -21,12 +21,11 @@ def general_tab(conf_window: ConfigWindow) -> None:
     tab.checkbox(
         "sound_effect",
         "Play sound effect ",
-        "Plays sound effect on answer",
     )
     tab.checkbox(
         "visual_effect",
-        "Play visual effect ",
-        "Play visual effect on answer",
+        "Play visual effect during review ",
+        "Visual effect will be played on answerign a card",
     )
     tab.stretch()
 
