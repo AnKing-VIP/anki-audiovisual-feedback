@@ -1,4 +1,4 @@
-License and source of sound files in this directory
+Below are the License and source of files in this directory
 
 again.m4a [CC0] https://freesound.org/people/timgormly/sounds/181858/
 hard.m4a [CC0] https://freesound.org/people/timgormly/sounds/181857/
