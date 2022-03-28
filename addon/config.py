@@ -1,5 +1,6 @@
 from typing import List
 from pathlib import Path
+
 from .ankiaddonconfig import ConfigManager, ConfigWindow
 
 
@@ -13,6 +14,8 @@ def get_themes() -> List[str]:
 
 
 def general_tab(conf_window: ConfigWindow) -> None:
+    conf_window.resize(400, 200)
+
     tab = conf_window.add_tab("General")
 
     themes = get_themes()
@@ -21,11 +24,6 @@ def general_tab(conf_window: ConfigWindow) -> None:
     tab.checkbox(
         "sound_effect",
         "Play sound effect ",
-    )
-    tab.checkbox(
-        "visual_effect",
-        "Play visual effect during review ",
-        "Visual effect will be played on answerign a card",
     )
     tab.stretch()
 
