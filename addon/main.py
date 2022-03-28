@@ -13,6 +13,7 @@ import aqt
 import anki
 
 from . import audios
+from .anking_menu import setup_menu
 from .ease import Ease
 from .ankiaddonconfig import ConfigManager
 
@@ -235,3 +236,5 @@ gui_hooks.webview_will_set_content.append(_on_webview_set_content)
 Reviewer._showAnswer = wrap(  # type: ignore
     Reviewer._showAnswer, patched_reviewer_show_answer, "around"
 )
+
+setup_menu()
