@@ -25,6 +25,8 @@ def general_tab(conf_window: ConfigWindow) -> None:
         "sound_effect",
         "Play sound effect ",
     )
+    tab.checkbox("review_effect", "During review ")
+    tab.checkbox("congrats_effect", "On completing deck ")
     tab.stretch()
 
 

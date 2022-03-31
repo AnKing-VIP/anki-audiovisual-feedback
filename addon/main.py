@@ -41,6 +41,8 @@ def refresh_conf() -> None:
 def on_answer_card(
     ease_tuple: Tuple[bool, Literal[1, 2, 3, 4]], reviewer: Reviewer, card: Card
 ) -> Tuple[bool, Literal[1, 2, 3, 4]]:
+    if not conf["review_effect"]:
+        return ease_tuple
     button_count = mw.col.sched.answerButtons(card)
     ease_num = ease_tuple[1]
     ease = Ease.from_num(ease_num, button_count)
@@ -71,6 +73,8 @@ def on_answer_card(
 
 def on_reviewer_page(web: WebContent) -> None:
     refresh_conf()
+    if not conf["review_effect"]:
+        return
     if (THEME_DIR / "web" / "reviewer.css").is_file():
         web.css.append(resource_url("web/reviewer.css"))
     if (THEME_DIR / "web" / "reviewer.js").is_file():
@@ -117,6 +121,8 @@ def all_files_url(dir: Path) -> List[str]:
 
 def on_congrats_page(web: AnkiWebView) -> None:
     refresh_conf()
+    if not conf["congrats_effect"]:
+        return
     css_file = THEME_DIR / "web" / "congrats.css"
     if css_file.is_file():
         # Sometimes this function is triggered twice.
