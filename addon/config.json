@@ -4,10 +4,5 @@
         "minor": -1
     },
     "sound_effect": true,
-    "theme": "Flashcard",
-    "themes": {
-        "Flashcard": {
-            "colorful_answer_button": true
-        }
-    }
+    "theme": "Flashcard"
 }
