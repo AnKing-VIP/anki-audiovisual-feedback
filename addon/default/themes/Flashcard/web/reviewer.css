@@ -1,7 +1,6 @@
 .visualFeedback {
   position: fixed;
   box-shadow: none;
-  transition: box-shadow 0.05s;
 }
 
 .visualFeedback.top,.visualFeedback.bottom {
