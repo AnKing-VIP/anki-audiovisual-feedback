@@ -86,6 +86,8 @@ def on_reviewer_page(web: WebContent) -> None:
     if (THEME_DIR / "web" / "reviewer.js").is_file():
         web.js.append(resource_url("web/reviewer.js"))
 
+    maybe_play_audio("start")
+
 
 def files_in_dir(dir: Path) -> Iterable[Path]:
     "Get all files in dir, without automatic hidden files such as '.DS_Store'"
