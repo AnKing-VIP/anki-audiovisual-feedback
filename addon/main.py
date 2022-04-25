@@ -72,6 +72,8 @@ def on_answer_card(
 
 
 def on_reviewer_page(web: WebContent) -> None:
+    global disableShowAnswer
+    disableShowAnswer = False
     refresh_conf()
     if not conf["review_effect"]:
         return
@@ -209,13 +211,6 @@ def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[boo
     return handled
 
 
-def on_state_will_change(new_state: str, old_state: str) -> None:
-    """Reset disableShowAnswer when starting a review session."""
-    global disableShowAnswer
-    if new_state == "review":
-        disableShowAnswer = False
-
-
 def _on_page_rendered(web: AnkiWebView) -> None:
     path = web.page().url().path()  # .path() removes "#night"
     name = os.path.basename(path)
@@ -239,7 +234,6 @@ def patched_reviewer_show_answer(
 
 audios.will_use_audio_player()
 gui_hooks.webview_did_receive_js_message.append(on_pycmd)
-gui_hooks.state_will_change.append(on_state_will_change)
 gui_hooks.reviewer_will_answer_card.append(on_answer_card)
 gui_hooks.webview_did_inject_style_into_page.append(_on_page_rendered)
 gui_hooks.webview_will_set_content.append(_on_webview_set_content)
