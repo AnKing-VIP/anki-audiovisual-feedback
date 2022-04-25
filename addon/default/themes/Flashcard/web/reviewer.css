@@ -34,20 +34,20 @@
 
 .visualFeedback.again {
   opacity: 1;
-  box-shadow: 0px 0px 20px 5px #f00;
+  box-shadow: 0px 0px 6vh 1vh #f00;
 }
 
 .visualFeedback.hard {
   opacity: 1;
-  box-shadow: 0px 0px 20px 5px #f90;
+  box-shadow: 0px 0px 6vh 1vh #f90;
 }
 
 .visualFeedback.good {
   opacity: 1;
-  box-shadow: 0px 0px 20px 5px #0e0;
+  box-shadow: 0px 0px 6vh 1vh #0e0;
 }
 
 .visualFeedback.easy {
   opacity: 1;
-  box-shadow: 0px 0px 20px 5px #09f;
+  box-shadow: 0px 0px 6vh 1vh #09f;
 }
