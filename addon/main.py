@@ -32,6 +32,15 @@ def resource_url(resource: str) -> str:
     return f"/_addons/{mw.addonManager.addonFromModule(__name__)}/user_files/themes/{conf['theme']}/{resource}"
 
 
+def maybe_play_audio(name: str) -> None:
+    if not conf["sound_effect"]:
+        return
+    audio_dir = THEME_DIR / "sounds" / name
+    file = random_file(audio_dir)
+    if file is not None:
+        audios.audio(file)
+
+
 def refresh_conf() -> None:
     global THEME_DIR
     conf.load()
@@ -56,12 +65,7 @@ def on_answer_card(
     elif ease == Ease.Easy:
         ans = "easy"
 
-    # Play sound effect
-    if conf["sound_effect"]:
-        audio_dir = THEME_DIR / "sounds" / ans
-        file = random_file(audio_dir)
-        if file is not None:
-            audios.audio(file)
+    maybe_play_audio(ans)
 
     # Play visual effect
     reviewer.web.eval(
@@ -162,11 +166,7 @@ def on_congrats_page(web: AnkiWebView) -> None:
             """
             % resource_url("web/congrats.js")
         )
-    audio_dir = THEME_DIR / "sounds" / "congrats"
-    if audio_dir.is_dir():
-        audio_file = random_file(audio_dir)
-        if audio_file is not None:
-            audios.audio(audio_file)
+    maybe_play_audio("congrats")
 
 
 def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[bool, Any]:
