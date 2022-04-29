@@ -53,3 +53,9 @@ def will_use_audio_player() -> None:
 
 def audio(file: Path) -> None:
     aqt.sound.av_player.play_without_interrupt(file)
+
+
+def force_stop_audio() -> None:
+    av_player = aqt.sound.av_player
+    if av_player.current_player:
+        av_player.current_player.stop()

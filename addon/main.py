@@ -222,6 +222,11 @@ def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[boo
 
 
 def on_state_will_change(new_state: str, old_state: str) -> None:
+    # Stop congrats audio when leaving congrats page.
+    # Current solution is imprecise, and targets all deck overview pages.
+    # But shouldn't cause any problems as no other audio should be playing
+    if old_state == "overview":
+        audios.force_stop_audio()
     if new_state == "review":
         on_reviewer()
 
