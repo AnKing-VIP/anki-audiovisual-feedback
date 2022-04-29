@@ -2,15 +2,8 @@
   let goodImages
   let againImages
 
-  const randomImageURL = (ease) => {
-    let array
-    if (ease === 'good' || ease === 'easy') {
-      array = goodImages
-    } else {
-      array = againImages
-    }
+  const randomImageURL = (array) => {
     if (array.length === 0) return null
-
     return array[Math.floor(Math.random() * array.length)]
   }
 
@@ -35,15 +28,14 @@
 
   let timeout = null
 
-  // ease: string "again" / "hard" / "good" / "easy"
-  window.showVisualFeedback = (ease) => {
+  function showImage (array) {
     const card = document.getElementById('qa')
     const container = document.getElementById('visualFeedback')
     if (timeout) {
       clearTimeout(timeout)
     }
 
-    const imgUrl = randomImageURL(ease)
+    const imgUrl = randomImageURL(array)
     if (imgUrl === null) return
 
     window.pycmd('audiovisualFeedback#disableShowAnswer')
@@ -54,11 +46,17 @@
     container.classList.add('visible')
     card.classList.add('hidden')
 
-    timeout = setTimeout((c) => {
+    timeout = setTimeout(() => {
       container.classList.remove('visible')
       card.classList.remove('hidden')
       container.removeChild(img)
       window.pycmd('audiovisualFeedback#enableShowAnswer')
-    }, 1500, ease)
+    }, 1500)
+  }
+
+  // ease: string "again" / "hard" / "good" / "easy"
+  window.showVisualFeedback = (ease) => {
+    const array = ease === 'good' || ease === 'easy' ? goodImages : againImages
+    showImage(array)
   }
 })()

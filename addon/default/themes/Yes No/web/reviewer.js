@@ -2,16 +2,8 @@
   let goodImages
   let againImages
 
-  // May return null
-  const randomImageURL = (ease) => {
-    let array
-    if (ease === 'good' || ease === 'easy') {
-      array = goodImages
-    } else {
-      array = againImages
-    }
+  const randomImageURL = (array) => {
     if (array.length === 0) return null
-
     return array[Math.floor(Math.random() * array.length)]
   }
 
@@ -36,14 +28,13 @@
 
   let timeout = null
 
-  // ease: string "again" / "hard" / "good" / "easy"
-  window.showVisualFeedback = (ease) => {
+  function showImage (array) {
     const container = document.getElementById('visualFeedback')
     if (timeout) {
       clearTimeout(timeout)
     }
 
-    const imgUrl = randomImageURL(ease)
+    const imgUrl = randomImageURL(array)
     if (imgUrl === null) return
 
     const img = document.createElement('img')
@@ -54,6 +45,12 @@
     timeout = setTimeout((c) => {
       container.classList.remove('visible')
       container.removeChild(img)
-    }, 200, ease)
+    }, 200)
+  }
+
+  // ease: string "again" / "hard" / "good" / "easy"
+  window.showVisualFeedback = (ease) => {
+    const array = ease === 'good' || ease === 'easy' ? goodImages : againImages
+    showImage(array)
   }
 })()

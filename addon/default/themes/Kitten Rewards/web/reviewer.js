@@ -3,14 +3,9 @@
   let container
   let image
 
-  // Includes from, doesn't include to
-  const randomInteger = (from, to) => {
-    return Math.floor(Math.random() * (to - from)) + from
-  }
-
   const randomImageURL = () => {
     if (images.length === 0) return null
-    return images[randomInteger(0, images.length)]
+    return images[Math.floor(Math.random() * images.length)]
   }
 
   // Wait for pycmd to initialize
@@ -36,22 +31,24 @@
 
   let timeout = null
 
-  // ease: string "again" / "hard" / "good" / "easy"
-  window.showVisualFeedback = (ease) => {
-    if (ease !== 'good' && ease !== 'easy') { return }
-
+  function showImage () {
     if (timeout) {
       clearTimeout(timeout)
     }
 
-    const imgUrl = randomImageURL(ease)
+    const imgUrl = randomImageURL()
     if (imgUrl === null) return
-
     image.src = imgUrl
     container.classList.add('visible')
 
     timeout = setTimeout((c) => {
       container.classList.remove('visible')
     }, 2000)
+  }
+
+  // ease: string "again" / "hard" / "good" / "easy"
+  window.showVisualFeedback = (ease) => {
+    if (ease !== 'good' && ease !== 'easy') { return }
+    showImage()
   }
 })()
