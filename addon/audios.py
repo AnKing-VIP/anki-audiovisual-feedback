@@ -9,7 +9,7 @@ from aqt.sound import SoundOrVideoTag, AVPlayer
 try:  # 2.1.50+
     from anki.utils import is_win
 except:
-    from anki.utils import isWin as is_win
+    from anki.utils import isWin as is_win  # type: ignore
 
 
 class CustomAVPlayer(AVPlayer):
