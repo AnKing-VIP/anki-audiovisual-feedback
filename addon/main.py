@@ -83,18 +83,18 @@ def on_reviewer() -> None:
 def on_reviewer_web_setup(web: WebContent) -> None:
     global isReviewStart
     refresh_conf()
-    if not conf["review_effect"]:
-        return
-    if (THEME_DIR / "web" / "reviewer.css").is_file():
-        web.css.append(resource_url("web/reviewer.css"))
-    if (THEME_DIR / "web" / "reviewer.js").is_file():
-        web.js.append(resource_url("web/reviewer.js"))
+    if conf["review_effect"]:
+        if (THEME_DIR / "web" / "reviewer.css").is_file():
+            web.css.append(resource_url("web/reviewer.css"))
+        if (THEME_DIR / "web" / "reviewer.js").is_file():
+            web.js.append(resource_url("web/reviewer.js"))
 
     if isReviewStart:
         isReviewStart = False
-        maybe_play_audio("start")
-        script = "if (typeof avfReviewStart === 'function') avfReviewStart();"
-        web.body += f"<script>{script}</script>"
+        if conf["start_effect"]:
+            maybe_play_audio("start")
+            script = "if (typeof avfReviewStart === 'function') avfReviewStart();"
+            web.body += f"<script>{script}</script>"
 
 
 def files_in_dir(dir: Path) -> Iterable[Path]:

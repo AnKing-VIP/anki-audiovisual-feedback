@@ -4,6 +4,7 @@
         "minor": -1
     },
     "sound_effect": true,
+    "start_effect": true,
     "review_effect": true,
     "congrats_effect": true,
     "theme": "Flashcard"

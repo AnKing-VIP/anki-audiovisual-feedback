@@ -34,11 +34,11 @@ def general_tab(conf_window: ConfigWindow) -> None:
         "sound_effect",
         "Play sound effect ",
     )
+    tab.checkbox("start_effect", "On review start ")
     tab.checkbox("review_effect", "During review ")
     tab.checkbox("congrats_effect", "On completing deck ")
 
     btn_lay = tab.hlayout()
-
     btn = QPushButton("Open Theme Folder")
     btn.clicked.connect(lambda _: open_theme_dir())
     btn.setToolTip(
