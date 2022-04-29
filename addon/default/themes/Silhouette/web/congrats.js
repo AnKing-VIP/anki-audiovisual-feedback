@@ -1,5 +1,5 @@
 (() => {
-  const onLoad = () => {
+  function onLoad () {
     const div = document.createElement('div')
     div.id = 'avf-img-container'
 

@@ -3,13 +3,15 @@
   let container
   let image
 
-  const randomImageURL = () => {
+  let feedbackTimeout = null
+
+  function randomImageURL () {
     if (images.length === 0) return null
     return images[Math.floor(Math.random() * images.length)]
   }
 
   // Wait for pycmd to initialize
-  const retrieveImages = () => {
+  function retrieveImages () {
     if (typeof pycmd === 'undefined') {
       setTimeout(retrieveImages, 10)
       return
@@ -17,7 +19,7 @@
     window.pycmd('audiovisualFeedback#files#images', (msg) => { images = JSON.parse(msg) })
   }
 
-  const onLoad = () => {
+  function onLoad () {
     container = document.createElement('div')
     container.id = 'visualFeedback'
     document.body.appendChild(container)
@@ -26,14 +28,9 @@
     container.appendChild(image)
   }
 
-  document.readyState === 'complete' ? onLoad() : window.addEventListener('load', onLoad)
-  retrieveImages()
-
-  let timeout = null
-
   function showImage () {
-    if (timeout) {
-      clearTimeout(timeout)
+    if (feedbackTimeout) {
+      clearTimeout(feedbackTimeout)
     }
 
     const imgUrl = randomImageURL()
@@ -41,14 +38,16 @@
     image.src = imgUrl
     container.classList.add('visible')
 
-    timeout = setTimeout((c) => {
+    feedbackTimeout = setTimeout((c) => {
       container.classList.remove('visible')
     }, 2000)
   }
 
-  // ease: string "again" / "hard" / "good" / "easy"
   window.showVisualFeedback = (ease) => {
     if (ease !== 'good' && ease !== 'easy') { return }
     showImage()
   }
+
+  document.readyState === 'complete' ? onLoad() : window.addEventListener('load', onLoad)
+  retrieveImages()
 })()
