@@ -24,7 +24,8 @@ THEME_DIR: Path = Path(__file__).parent / "user_files" / "themes" / conf["theme"
 
 mw.addonManager.setWebExports(__name__, r"user_files/themes/.*")
 
-disableShowAnswer = False
+disableShowAnswer = False  # Hide buttons on bottom bar
+isReviewStart = False
 
 
 def resource_url(resource: str) -> str:
@@ -75,9 +76,14 @@ def on_answer_card(
     return ease_tuple
 
 
-def on_reviewer_page(web: WebContent) -> None:
-    global disableShowAnswer
+def on_reviewer() -> None:
+    global disableShowAnswer, isReviewStart
     disableShowAnswer = False
+    isReviewStart = True
+
+
+def on_reviewer_web_setup(web: WebContent) -> None:
+    global isReviewStart
     refresh_conf()
     if not conf["review_effect"]:
         return
@@ -86,7 +92,11 @@ def on_reviewer_page(web: WebContent) -> None:
     if (THEME_DIR / "web" / "reviewer.js").is_file():
         web.js.append(resource_url("web/reviewer.js"))
 
-    maybe_play_audio("start")
+    if isReviewStart:
+        isReviewStart = False
+        maybe_play_audio("start")
+        script = "if (typeof avfReviewStart === 'function') avfReviewStart();"
+        web.body += f"<script>{script}</script>"
 
 
 def files_in_dir(dir: Path) -> Iterable[Path]:
@@ -213,6 +223,11 @@ def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[boo
     return handled
 
 
+def on_state_will_change(new_state: str, old_state: str) -> None:
+    if new_state == "review":
+        on_reviewer()
+
+
 def _on_page_rendered(web: AnkiWebView) -> None:
     path = web.page().url().path()  # .path() removes "#night"
     name = os.path.basename(path)
@@ -224,7 +239,7 @@ def _on_webview_set_content(
     web: "aqt.webview.WebContent", context: Union[object, None]
 ) -> None:
     if isinstance(context, aqt.reviewer.Reviewer):
-        on_reviewer_page(web)
+        on_reviewer_web_setup(web)
 
 
 def patched_reviewer_show_answer(
@@ -236,6 +251,7 @@ def patched_reviewer_show_answer(
 
 audios.will_use_audio_player()
 gui_hooks.webview_did_receive_js_message.append(on_pycmd)
+gui_hooks.state_will_change.append(on_state_will_change)
 gui_hooks.reviewer_will_answer_card.append(on_answer_card)
 gui_hooks.webview_did_inject_style_into_page.append(_on_page_rendered)
 gui_hooks.webview_will_set_content.append(_on_webview_set_content)
