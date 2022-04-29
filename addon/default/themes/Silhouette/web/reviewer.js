@@ -14,18 +14,24 @@
     return array[Math.floor(Math.random() * array.length)]
   }
 
+  // Wait for pycmd to initialize
+  const retrieveImages = () => {
+    if (typeof pycmd === 'undefined') {
+      setTimeout(retrieveImages, 10)
+      return
+    }
+    window.pycmd('audiovisualFeedback#files#images/good', (msg) => { goodImages = JSON.parse(msg) })
+    window.pycmd('audiovisualFeedback#files#images/again', (msg) => { againImages = JSON.parse(msg) })
+  }
+
   const onLoad = () => {
     const div = document.createElement('div')
     div.id = 'visualFeedback'
     document.body.appendChild(div)
-    // pycmd is still not initialized at this point
-    setTimeout(() => {
-      window.pycmd('audiovisualFeedback#files#images/good', (msg) => { goodImages = JSON.parse(msg) })
-      window.pycmd('audiovisualFeedback#files#images/again', (msg) => { againImages = JSON.parse(msg) })
-    }, 100)
   }
 
   document.readyState === 'complete' ? onLoad() : window.addEventListener('load', onLoad)
+  retrieveImages()
 
   let timeout = null
 
