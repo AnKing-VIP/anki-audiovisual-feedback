@@ -69,9 +69,7 @@ def on_answer_card(
     maybe_play_audio(ans)
 
     # Play visual effect
-    reviewer.web.eval(
-        f"if (typeof showVisualFeedback === 'function') showVisualFeedback('{ans}')"
-    )
+    reviewer.web.eval(f"if (typeof avfAnswer === 'function') avfAnswer('{ans}')")
 
     return ease_tuple
 

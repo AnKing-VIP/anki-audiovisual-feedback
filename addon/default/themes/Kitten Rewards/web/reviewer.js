@@ -43,7 +43,7 @@
     }, 2000)
   }
 
-  window.showVisualFeedback = (ease) => {
+  window.avfAnswer = (ease) => {
     if (ease !== 'good' && ease !== 'easy') { return }
     showImage()
   }

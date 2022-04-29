@@ -15,7 +15,7 @@
     }
   }
 
-  window.showVisualFeedback = (ease) => {
+  window.avfAnswer = (ease) => {
     const elems = document.getElementsByClassName('visualFeedback')
     if (feedbackTimeout) {
       clearTimeout(feedbackTimeout)

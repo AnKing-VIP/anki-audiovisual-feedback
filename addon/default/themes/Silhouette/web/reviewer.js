@@ -57,7 +57,7 @@
     }, 1500)
   }
 
-  window.showVisualFeedback = (ease) => {
+  window.avfAnswer = (ease) => {
     const array = ease === 'good' || ease === 'easy' ? goodImages : againImages
     showImage(array)
   }
