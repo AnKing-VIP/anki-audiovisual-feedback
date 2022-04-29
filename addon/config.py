@@ -27,25 +27,28 @@ def general_tab(conf_window: ConfigWindow) -> None:
 
     tab = conf_window.add_tab("General")
 
-    themes = get_themes()
-    tab.dropdown("theme", themes, themes, "Theme:", "Choose a gamification theme")
-
-    tab.checkbox(
-        "sound_effect",
-        "Play sound effect ",
-    )
-    tab.checkbox("start_effect", "On review start ")
-    tab.checkbox("review_effect", "During review ")
-    tab.checkbox("congrats_effect", "On completing deck ")
-
     btn_lay = tab.hlayout()
+    themes = get_themes()
+    btn_lay.dropdown("theme", themes, themes, "Theme:", "Choose a gamification theme")
+    btn_lay.stretch()
+
     btn = QPushButton("Open Theme Folder")
     btn.clicked.connect(lambda _: open_theme_dir())
     btn.setToolTip(
         "You can customize themes by modifying files in the theme directory."
     )
     btn_lay.addWidget(btn)
-    btn_lay.stretch()
+
+    tab.hseparator()
+
+    tab.checkbox(
+        "sound_effect",
+        "Play sound effect ",
+    )
+    tab.space(8)
+    tab.checkbox("start_effect", "On review start ")
+    tab.checkbox("review_effect", "During review ")
+    tab.checkbox("congrats_effect", "On completing deck ")
 
     tab.stretch()
 
