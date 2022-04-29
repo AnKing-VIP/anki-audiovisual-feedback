@@ -1,13 +1,12 @@
 (() => {
-  let goodImages
-  let againImages
-  let startImages
+  // { [key: "again" | "hard" | "good" | "easy"]: string[] }
+  const images = {}
 
   let feedbackTimeout = null
   let waitingForStartImages = false
 
   function randomImageURL (array) {
-    if (array.length === 0) return null
+    if (typeof array === 'undefined' || array.length === 0) return null
     return array[Math.floor(Math.random() * array.length)]
   }
 
@@ -17,10 +16,11 @@
       setTimeout(retrieveImages, 10)
       return
     }
-    window.pycmd('audiovisualFeedback#files#images/good', (msg) => { goodImages = JSON.parse(msg) })
-    window.pycmd('audiovisualFeedback#files#images/again', (msg) => { againImages = JSON.parse(msg) })
+    for (const ease of ['again', 'hard', 'good', 'easy']) {
+      window.pycmd('audiovisualFeedback#files#images/' + ease, (msg) => { images[ease] = JSON.parse(msg) })
+    }
     window.pycmd('audiovisualFeedback#files#images/start', (msg) => {
-      startImages = JSON.parse(msg)
+      images.start = JSON.parse(msg)
       if (waitingForStartImages) window.avfReviewStart()
     })
   }
@@ -58,16 +58,15 @@
   }
 
   window.avfAnswer = (ease) => {
-    const array = ease === 'good' || ease === 'easy' ? goodImages : againImages
-    showImage(array)
+    showImage(images[ease])
   }
 
   window.avfReviewStart = () => {
-    if (typeof startImages === 'undefined') {
+    if ('start' in images) {
+      showImage(images.start)
+    } else {
       waitingForStartImages = true
-      return
     }
-    showImage(startImages)
   }
 
   document.readyState === 'complete' ? onLoad() : window.addEventListener('load', onLoad)
