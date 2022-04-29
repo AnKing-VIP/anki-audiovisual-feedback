@@ -1,6 +1,9 @@
 (() => {
   let goodImages
   let againImages
+  let startImages
+
+  let waitingForStartImages = false
 
   // May return null
   const randomImageURL = (ease) => {
@@ -23,6 +26,10 @@
     }
     window.pycmd('audiovisualFeedback#files#images/good', (msg) => { goodImages = JSON.parse(msg) })
     window.pycmd('audiovisualFeedback#files#images/again', (msg) => { againImages = JSON.parse(msg) })
+    window.pycmd('audiovisualFeedback#files#images/start', (msg) => {
+      startImages = JSON.parse(msg)
+      if (waitingForStartImages) window.avfReviewStart()
+    })
   }
 
   const onLoad = () => {
@@ -60,5 +67,13 @@
   window.showVisualFeedback = (ease) => {
     const array = ease === 'good' || ease === 'easy' ? goodImages : againImages
     showImage(array)
+  }
+
+  window.avfReviewStart = () => {
+    if (typeof startImages === 'undefined') {
+      waitingForStartImages = true
+      return
+    }
+    showImage(startImages)
   }
 })()
