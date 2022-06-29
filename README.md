@@ -2,6 +2,8 @@ For add-on description, please see [AnkiWeb page](https://ankiweb.net) (Which do
 
 This add-on is based on the [Anki Fanfare: Gamification](https://github.com/lovac42/Fanfare) add-on
 
+Supported Anki versions: **?? - Anki 2.1.50+**
+
 # How to customize themes
 
 You can modify existing themes, or create a new theme. Open the add-on config and click 'Open Theme Folder' to find the theme files.
