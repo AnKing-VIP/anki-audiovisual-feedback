@@ -2,7 +2,7 @@ For add-on description, please see [AnkiWeb page](https://ankiweb.net) (Which do
 
 This add-on is based on the [Anki Fanfare: Gamification](https://github.com/lovac42/Fanfare) add-on
 
-Supported Anki versions: **?? - Anki 2.1.50+**
+Supported Anki versions: **2.1.36 - 2.1.50+**
 
 # How to customize themes
 
