@@ -38,9 +38,9 @@ def resource_url(resource: str) -> str:
     return f"/_addons/{mw.addonManager.addonFromModule(__name__)}/user_files/themes/{conf['theme']}/{resource}"
 
 
-def maybe_play_audio(name: str) -> Path:
+def maybe_play_audio(name: str) -> Optional[Path]:
     if not conf["sound_effect"]:
-        return
+        return None
     audio_dir = THEME_DIR / "sounds" / name
     file = random_file(audio_dir)
     if file is not None:
@@ -54,12 +54,12 @@ def refresh_conf() -> None:
     THEME_DIR = Path(__file__).parent / "user_files" / "themes" / conf["theme"]
 
 
-def has_reviews():
+def has_reviews() -> bool:
     counts = list(mw.col.sched.counts())
     return sum(counts) != 0
 
 
-def reached_limit_breaker() -> None:
+def reached_limit_breaker() -> bool:
     limit_breaker = conf["limit_breaker"]
     if (
         limit_breaker
@@ -292,7 +292,7 @@ def on_state_will_change(new_state: str, old_state: str) -> None:
     did = mw.col.decks.selected()
     if did != last_did:
         last_did = did
-        intermission_limit = max(4, intermission_limit // 1.2)
+        intermission_limit = max(4, int(intermission_limit // 1.2))
     was_hard = False
     audios.force_stop_audio()
 
