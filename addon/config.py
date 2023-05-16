@@ -29,7 +29,8 @@ def general_tab(conf_window: ConfigWindow) -> None:
 
     btn_lay = tab.hlayout()
     themes = get_themes()
-    btn_lay.dropdown("theme", themes, themes, "Theme:", "Choose a gamification theme")
+    btn_lay.dropdown("theme", themes, themes, "Theme:",
+                     "Choose a gamification theme")
     btn_lay.stretch()
 
     btn = QPushButton("Open Theme Folder")
@@ -49,7 +50,8 @@ def general_tab(conf_window: ConfigWindow) -> None:
     tab.checkbox("start_effect", "Play feedback on review start ")
     tab.checkbox("review_effect", "Play feedback during review ")
     tab.checkbox("congrats_effect", "Play feedback on completing deck ")
-
+    tab.number_input(
+        "limit_breaker", "Lower values make it more likely to bring the user into an intermission stage. Set to 0 to disable intermission", maximum=99999)
     tab.stretch()
 
 

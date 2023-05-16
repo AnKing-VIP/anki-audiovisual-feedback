@@ -7,5 +7,6 @@
     "start_effect": true,
     "review_effect": true,
     "congrats_effect": true,
+    "limit_breaker": 40,
     "theme": "Flashcard"
 }
