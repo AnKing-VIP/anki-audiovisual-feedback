@@ -20,8 +20,7 @@ from .ankiaddonconfig import ConfigManager
 
 conf = ConfigManager()
 
-THEME_DIR: Path = Path(__file__).parent / "user_files" / \
-    "themes" / conf["theme"]
+THEME_DIR: Path = Path(__file__).parent / "user_files" / "themes" / conf["theme"]
 
 mw.addonManager.setWebExports(__name__, r"user_files/themes/.*")
 
@@ -54,16 +53,23 @@ def refresh_conf() -> None:
     conf.load()
     THEME_DIR = Path(__file__).parent / "user_files" / "themes" / conf["theme"]
 
+
 def has_reviews():
     counts = list(mw.col.sched.counts())
     return sum(counts) != 0
 
+
 def reached_limit_breaker() -> None:
-    limit_breaker = conf['limit_breaker']
-    if limit_breaker and was_hard and \
-            intermission_limit >= limit_breaker and has_reviews():
+    limit_breaker = conf["limit_breaker"]
+    if (
+        limit_breaker
+        and was_hard
+        and intermission_limit >= limit_breaker
+        and has_reviews()
+    ):
         return True
     return False
+
 
 def on_answer_card(
     ease_tuple: Tuple[bool, Literal[1, 2, 3, 4]], reviewer: Reviewer, card: Card
@@ -90,15 +96,16 @@ def on_answer_card(
         was_hard = ease_num <= 2
         if supports_intermission and reached_limit_breaker():
             intermission_limit = random.randrange(0, 10)
-            last_intermission_sound = maybe_play_audio('break')
+            last_intermission_sound = maybe_play_audio("break")
             reviewer.web.eval("avfIntermission('%(ans)s');")
             # reviewer.web.eval("if (typeof avfIntermission === 'function') {avfIntermission('%(ans)s');} else {pycmd('audiovisualFeedback#resumeReview#%(ans)s')}" % dict(ans=ans))
         else:
             maybe_play_audio(ans)
-            reviewer.web.eval(f"if (typeof avfAnswer === 'function') avfAnswer('{ans}')")
+            reviewer.web.eval(
+                f"if (typeof avfAnswer === 'function') avfAnswer('{ans}')"
+            )
 
     reviewer.web.evalWithCallback("if (typeof avfIntermission === 'function') true", cb)
-
 
     return ease_tuple
 
@@ -215,13 +222,13 @@ def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[boo
     if not message.startswith(addon_key):
         return handled
 
-    body = message[len(addon_key):]
+    body = message[len(addon_key) :]
     if body.startswith("randomFile#"):
-        path = body[len("randomFile#"):]
+        path = body[len("randomFile#") :]
         return (True, random_file_url(THEME_DIR / path))
 
     elif body.startswith("files#"):
-        path = body[len("files#"):]
+        path = body[len("files#") :]
         value = all_files_url(THEME_DIR / path)
         return (True, json.dumps(value))
 
@@ -254,11 +261,10 @@ def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[boo
         if not isinstance(context, Reviewer):
             return (False, None)
 
-        answer = body[len("resumeReview#"):]
+        answer = body[len("resumeReview#") :]
         audios.force_stop_audio()
         maybe_play_audio(answer)
-        context.web.eval(
-            f"if (typeof avfAnswer === 'function') avfAnswer('{answer}')")
+        context.web.eval(f"if (typeof avfAnswer === 'function') avfAnswer('{answer}')")
         disableShowAnswer = False
         context.bottom.web.eval(
             """document.getElementById("innertable").style.visibility = "visible";"""
@@ -289,6 +295,7 @@ def on_state_will_change(new_state: str, old_state: str) -> None:
         intermission_limit = max(4, intermission_limit // 1.2)
     was_hard = False
     audios.force_stop_audio()
+
 
 def _on_page_rendered(web: AnkiWebView) -> None:
     path = web.page().url().path()  # .path() removes "#night"
