@@ -27,7 +27,7 @@ jobs:
           python -m pip install aqt pyqt5-stubs mypy black
 
       - name: Run black
-        run: black --check .
+        run: black --check . --exclude ankiaddonconfig
 
       - name: Run mypy
         run: mypy --install-types --non-interactive addon/
