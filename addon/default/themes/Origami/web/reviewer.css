@@ -20,3 +20,13 @@
 #visualFeedback img {
   margin: auto;
 }
+
+#qa.hidden {
+  display: none;
+}
+
+#avf-intermission {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

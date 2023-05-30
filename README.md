@@ -8,10 +8,11 @@ Supported Anki versions: **2.1.36 - 2.1.50+**
 
 You can modify existing themes, or create a new theme. Open the add-on config and click 'Open Theme Folder' to find the theme files.
 
-Audioisual feedback is triggered in 3 situations:
+Audioisual feedback is triggered in 4 situations:
 (1) when the review starts,
 (2) when you click an answer and do a review,
-(3) when you go on the congrats screen (When the review is completed).
+(3) when you go on the congrats screen (When the review is completed),
+(4) When you repeatedly fails cards.
 
 The add-on chooses a file to play/display from folder `start` for (1), and `congrats` for (3). For (2), a file is chosen from `again|hard|good|easy` based on which answer button you pressed.
 
@@ -23,7 +24,8 @@ If you messed up the theme somehow, you can find the original theme files in `ad
 
 Images in `images/` isn't actually displayed by default. The visual feedback is controlled by the 4 files `web/(reviewer|congrats).(js|css)`, and many themes just choose to display images in `images/` directory.
 
-On (1), `window.avfReviewStart()` is called. On (2), `window.avfAnswer(ease)` is called where ease is the string `"again"|"hard"|"good"|"easy"`. You can control the visual effect by declaring those functions in the `web/reviewer.js`.
+On (1), `window.avfReviewStart()` is called. On (2), `window.avfAnswer(ease)` is called where ease is the string `"again"|"hard"|"good"|"easy"`. On (4), `window.avfIntermission()` is called.
+You can control the visual effect by declaring those functions in the `web/reviewer.js`.
 
 ### Creating a new theme
 

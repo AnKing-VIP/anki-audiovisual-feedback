@@ -49,7 +49,11 @@ def general_tab(conf_window: ConfigWindow) -> None:
     tab.checkbox("start_effect", "Play feedback on review start ")
     tab.checkbox("review_effect", "Play feedback during review ")
     tab.checkbox("congrats_effect", "Play feedback on completing deck ")
-
+    tab.number_input(
+        "limit_breaker",
+        "Lower values make it more likely to bring the user into an intermission stage. Set to 0 to disable intermission",
+        maximum=99999,
+    )
     tab.stretch()
 
 
