@@ -98,7 +98,6 @@ def on_answer_card(
             intermission_limit = random.randrange(0, 10)
             last_intermission_sound = maybe_play_audio("break")
             reviewer.web.eval("avfIntermission('%(ans)s');")
-            # reviewer.web.eval("if (typeof avfIntermission === 'function') {avfIntermission('%(ans)s');} else {pycmd('audiovisualFeedback#resumeReview#%(ans)s')}" % dict(ans=ans))
         else:
             maybe_play_audio(ans)
             reviewer.web.eval(
