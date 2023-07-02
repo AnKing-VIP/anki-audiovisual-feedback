@@ -1,4 +1,4 @@
-For add-on description, please see [AnkiWeb page](https://ankiweb.net/shared/info/231569866) (Which does not exist yet!)
+For add-on description, please see [AnkiWeb page](https://ankiweb.net/shared/info/231569866)
 
 This add-on is based on the [Anki Fanfare: Gamification](https://github.com/lovac42/Fanfare) add-on
 
