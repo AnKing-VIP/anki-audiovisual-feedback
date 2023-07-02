@@ -8,7 +8,7 @@ Supported Anki versions: **2.1.36 - 2.1.50+**
 
 You can modify existing themes, or create a new theme. Open the add-on config and click 'Open Theme Folder' to find the theme files.
 
-Audioisual feedback is triggered in 4 situations:
+Audiovisual feedback is triggered in 4 situations:
 (1) when the review starts,
 (2) when you click an answer and do a review,
 (3) when you go on the congrats screen (When the review is completed),
