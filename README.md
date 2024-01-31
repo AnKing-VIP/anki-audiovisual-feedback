@@ -31,6 +31,10 @@ You can control the visual effect by declaring those functions in the `web/revie
 
 You can create a new theme by copy-pasting an existing theme directory in `addon_folder/user_files/themes/` directory. (Not in the `addon_folder/default/themes/` directory)
 
+# Wiki
+
+See the [wiki](https://github.com/AnKing-VIP/anki-audiovisual-feedback/wiki) for more details on theme customization. If you made a new theme, feel free to share it there!
+
 # Development
 
 ## Setup
