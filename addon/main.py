@@ -298,8 +298,10 @@ def on_state_will_change(new_state: str, old_state: str) -> None:
 
 def _on_page_rendered(web: AnkiWebView) -> None:
     path = web.page().url().path()  # .path() removes "#night"
+    # "congrats.html" on older versions, "congrats" on v2024.06+
     name = os.path.basename(path)
-    if name == "congrats.html":
+    name = name.split(".")[0]
+    if name == "congrats":
         on_congrats_page(web)
 
 
