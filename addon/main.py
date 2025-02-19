@@ -278,13 +278,12 @@ def on_pycmd(handled: Tuple[bool, Any], message: str, context: Any) -> Tuple[boo
 
 
 def on_state_will_change(new_state: str, old_state: str) -> None:
-    # Stop congrats audio when leaving congrats page.
-    # Current solution is imprecise, and targets all deck overview pages.
-    # But shouldn't cause any problems as no other audio should be playing
-    if old_state == "overview":
-        audios.force_stop_audio()
+    audios.force_stop_audio()
     if new_state == "review":
         on_reviewer()
+
+    if not mw.col:
+        return
 
     global last_did, intermission_limit, was_hard
     # Lower limit break when jumping to a different deck
@@ -293,7 +292,6 @@ def on_state_will_change(new_state: str, old_state: str) -> None:
         last_did = did
         intermission_limit = max(4, int(intermission_limit // 1.2))
     was_hard = False
-    audios.force_stop_audio()
 
 
 def _on_page_rendered(web: AnkiWebView) -> None:
