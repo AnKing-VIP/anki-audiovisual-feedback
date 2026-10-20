@@ -54,6 +54,18 @@ def general_tab(conf_window: ConfigWindow) -> None:
         "Lower values make it more likely to bring the user into an intermission stage. Set to 0 to disable intermission",
         maximum=99999,
     )
+    tab.space(8)
+    tab.checkbox(
+        "variable_reward",
+        "Variable ratio reward ",
+        "Occasionally reward a good or easy answer with a special sound and a bigger visual effect",
+    )
+    tab.number_input(
+        "variable_reward_ratio",
+        "Give the variable ratio reward on 1 in this many good or easy answers on average",
+        minimum=1,
+        maximum=99999,
+    )
     tab.stretch()
 
 

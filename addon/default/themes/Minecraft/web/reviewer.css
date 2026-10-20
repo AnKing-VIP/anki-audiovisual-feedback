@@ -50,3 +50,12 @@
   opacity: 1;
   box-shadow: 0px 0px 6vh 1vh #709cd5;
 }
+
+/* Variable ratio reward: twice as big */
+.visualFeedback.good.bonus {
+  box-shadow: 0px 0px 12vh 2vh #0e0;
+}
+
+.visualFeedback.easy.bonus {
+  box-shadow: 0px 0px 12vh 2vh #709cd5;
+}

@@ -15,18 +15,19 @@
     }
   }
 
-  window.avfAnswer = (ease) => {
+  window.avfAnswer = (ease, isBonus) => {
     const elems = document.getElementsByClassName('visualFeedback')
     if (feedbackTimeout) {
       clearTimeout(feedbackTimeout)
     }
     for (const elem of elems) {
       elem.classList.add(ease)
+      elem.classList.toggle('bonus', isBonus === true)
     }
 
     feedbackTimeout = setTimeout((c) => {
       for (const elem of elems) {
-        elem.classList.remove(c)
+        elem.classList.remove(c, 'bonus')
       }
     }, 300, ease)
   }

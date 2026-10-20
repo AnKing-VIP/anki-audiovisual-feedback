@@ -16,6 +16,8 @@ Audiovisual feedback is triggered in 4 situations:
 
 The add-on chooses a file to play/display from folder `start` for (1), and `congrats` for (3). For (2), a file is chosen from `again|hard|good|easy` based on which answer button you pressed.
 
+If the variable ratio reward is enabled in the add-on config, on average 1 in N good or easy answers play a file from `sounds/bonus` instead. If the theme has no `sounds/bonus` folder, the add-on's built-in bonus sound is played.
+
 You can change which images/sounds are played by adding, modifying, or deleting the files in the theme directory.
 
 If you messed up the theme somehow, you can find the original theme files in `addon_folder/default/themes/`.
@@ -24,7 +26,7 @@ If you messed up the theme somehow, you can find the original theme files in `ad
 
 Images in `images/` isn't actually displayed by default. The visual feedback is controlled by the 4 files `web/(reviewer|congrats).(js|css)`, and many themes just choose to display images in `images/` directory.
 
-On (1), `window.avfReviewStart()` is called. On (2), `window.avfAnswer(ease)` is called where ease is the string `"again"|"hard"|"good"|"easy"`. On (4), `window.avfIntermission()` is called.
+On (1), `window.avfReviewStart()` is called. On (2), `window.avfAnswer(ease, isBonus)` is called where ease is the string `"again"|"hard"|"good"|"easy"`, and isBonus is `true` when the answer got a variable ratio reward. On (4), `window.avfIntermission()` is called.
 You can control the visual effect by declaring those functions in the `web/reviewer.js`.
 
 ### Creating a new theme
@@ -59,6 +61,14 @@ You will need to install the following python packages to run black, mypy and py
 
 ```
 pip install aqt pyqt5-stubs mypy black
+```
+
+## Bonus sound
+
+The built-in variable ratio reward sound `addon/sounds/bonus.wav` is synthesized by a script. To regenerate it, run
+
+```
+python tools/generate_bonus_sound.py
 ```
 
 # Building ankiaddon file
