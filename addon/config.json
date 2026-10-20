@@ -8,5 +8,7 @@
     "review_effect": true,
     "congrats_effect": true,
     "limit_breaker": 40,
+    "variable_reward": false,
+    "variable_reward_ratio": 10,
     "theme": "Flashcard"
 }

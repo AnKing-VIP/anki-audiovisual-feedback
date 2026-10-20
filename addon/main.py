@@ -21,6 +21,8 @@ from .ankiaddonconfig import ConfigManager
 conf = ConfigManager()
 
 THEME_DIR: Path = Path(__file__).parent / "user_files" / "themes" / conf["theme"]
+# Played on a variable ratio reward if the theme has no files in "sounds/bonus"
+DEFAULT_BONUS_SOUND: Path = Path(__file__).parent / "sounds" / "bonus.wav"
 
 mw.addonManager.setWebExports(__name__, r"user_files/themes/.*")
 
@@ -38,11 +40,13 @@ def resource_url(resource: str) -> str:
     return f"/_addons/{mw.addonManager.addonFromModule(__name__)}/user_files/themes/{conf['theme']}/{resource}"
 
 
-def maybe_play_audio(name: str) -> Optional[Path]:
+def maybe_play_audio(name: str, fallback: Optional[Path] = None) -> Optional[Path]:
     if not conf["sound_effect"]:
         return None
     audio_dir = THEME_DIR / "sounds" / name
     file = random_file(audio_dir)
+    if file is None:
+        file = fallback
     if file is not None:
         audios.audio(file)
     return file
@@ -69,6 +73,13 @@ def reached_limit_breaker() -> bool:
     ):
         return True
     return False
+
+
+def rolled_variable_reward(ans: str) -> bool:
+    """Variable ratio schedule: each good or easy answer has a 1 in N chance."""
+    if not conf["variable_reward"] or ans not in ("good", "easy"):
+        return False
+    return random.random() < 1 / max(1, conf["variable_reward_ratio"])
 
 
 def on_answer_card(
@@ -99,9 +110,13 @@ def on_answer_card(
             last_intermission_sound = maybe_play_audio("break")
             reviewer.web.eval("avfIntermission('%(ans)s');")
         else:
-            maybe_play_audio(ans)
+            is_bonus = rolled_variable_reward(ans)
+            if is_bonus:
+                maybe_play_audio("bonus", DEFAULT_BONUS_SOUND)
+            else:
+                maybe_play_audio(ans)
             reviewer.web.eval(
-                f"if (typeof avfAnswer === 'function') avfAnswer('{ans}')"
+                f"if (typeof avfAnswer === 'function') avfAnswer('{ans}', {json.dumps(is_bonus)})"
             )
 
     reviewer.web.evalWithCallback("if (typeof avfIntermission === 'function') true", cb)
